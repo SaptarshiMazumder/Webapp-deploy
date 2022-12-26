@@ -86,6 +86,7 @@
     {% for url in post.images_urls_list %}
     <!-- http://127.0.0.1:8000/media/{{url }}<br /> -->
     <!-- {% static media_url %} -->
+    {{url}}
     <img src="http://127.0.0.1:8000/media/{{url }}" alt="Image">
     <!-- <img src="{% static url %}" alt="My image"> -->
 
