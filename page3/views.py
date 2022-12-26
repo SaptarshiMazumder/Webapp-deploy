@@ -1,20 +1,4 @@
 
-
-from cgitb import html, reset
-from dataclasses import fields
-from email import message
-from email.mime import image
-from ftplib import all_errors
-from multiprocessing import reduction
-from operator import is_
-import os
-import re
-from telnetlib import GA
-from tkinter import Image
-from turtle import pos, title
-from unicodedata import name
-from unittest import result
-from urllib.request import Request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse, HttpResponseNotAllowed
 from django.views.generic import ListView, DetailView, UpdateView
