@@ -1,0 +1,104 @@
+{% load static %}
+<div class="post-category-section">
+    <!-- <i class="fa-solid fa-globe"></i> -->
+    <i class="fa-solid fa-puzzle-piece"></i>
+    <!-- <span class="material-icons post-topic-icon">&#xf1c8;</span> -->
+    <a class="post-category">
+        {{post.category}}</a>
+    {{post.id}}
+</div>
+
+<section class="post-header-section">
+    <div class="profile-pic">
+        {%if post.user_profile.profile_pic.name %}
+        <a href="{%url 'user-posts-page' post.author%}"><img src="{{ post.user_profile.profile_pic.url }}"
+                width="500"></a>
+        {% endif %}
+        <!-- <img src="{{ post.user_profile.profile_pic.url }}" width="500"> -->
+    </div>
+
+    <span class="post-profile-section">{{post.author}} <span class="date">
+            {{post.post_date}}
+        </span> </span>
+
+    <span class="post-options-button" value="{{post.id}}">
+
+        <div class="post-options-list " id="post-options-list" value="{{post.id}}">
+            <div class="blocker" id="blocker" value="{{post.id}}"></div>
+            <div class="post-options-list-items">
+                <button id="post-options-list-close" value="{{post.id}}"><i class="fa-solid fa-xmark"></i></button>
+                <ul>
+                    {% if user.is_authenticated %}
+                    {% if user.id == post.author.id %}
+
+                    <li><a href="{% url 'delete-post' post.pk %}">Delete</a>
+                    </li>
+                    <!-- <button id="like-button" value="{{ post.pk }}">Like</button> -->
+                    {% endif %}
+                    {% endif %}
+
+                    <li>Add to favorites</li>
+                    <li>Share</li>
+                    <li>Follow @{{post.author}}</li>
+                    <li>Block @{{post.author}}</li>
+                    <li>Report post</li>
+                </ul>
+            </div>
+
+        </div>
+        <i class="fa-solid fa-ellipsis-vertical" id="three-dots" value="{{post.id}}"></i>
+    </span>
+
+</section>
+
+<a class="post-body-section" onclick="storeScroll()" href="{% url 'upload_reply' post.pk %}">
+    {% if replyingToIsReply %}
+    <p>@{{replyingToAuthor}} </p>
+    {% endif %}{{post.body|safe}}
+</a>
+
+<div class="post-tags">
+    {%for t in post.get_Tag%}
+    {{t}}
+    {%endfor%}
+</div>
+
+
+
+
+{% if post.image1 %}
+<img src="{{ post.image1.url}}" width="500">
+{% endif %}
+
+
+<div class="images">
+
+    {% if post.has_images %}
+
+    <!-- {% for image in image_list %}
+    {% if image.post.id == post.id %}
+    <img src="{{ image.image.url}}">
+    {% endif %}
+    {% endfor %} -->
+    <!-- {{ post.imagefiles}} -->
+    <br />
+
+    {% for url in post.images_urls_list %}
+    <!-- http://127.0.0.1:8000/media/{{url }}<br /> -->
+    <!-- {% static media_url %} -->
+    <img src="http://127.0.0.1:8000/media/{{url }}" alt="Image">
+    <!-- <img src="{% static url %}" alt="My image"> -->
+
+    {% endfor %}
+
+    {% endif %}
+</div>
+{% if post.video %}
+<video class="post-video" width="500" controls autoplay>
+    <source src="{{post.video.url}}" type="video/mp4">
+</video>
+
+<!-- <a href="{{post.video.url}}">Link</a> -->
+
+{% endif %}
+<br />

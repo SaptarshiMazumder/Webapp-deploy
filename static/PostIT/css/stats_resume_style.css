@@ -1,0 +1,158 @@
+.divided_section {
+    display: flex;
+    justify-content: space-between;
+}
+
+.gamer_profile_all_stats_section {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--secondary_bg_color);
+    width: 95%;
+    margin: 10px auto;
+    padding: 20px 0;
+    border-radius: 10px;
+}
+
+.section_info {
+    width: 100%;
+}
+
+.left_section {
+    border-right: 1px solid var(--border-color);
+}
+
+.mid_section {
+    width: 100%;
+    display: flex;
+}
+
+.mid_section .section_info .game_stat {
+    display: grid;
+    grid-template-columns: 1.5fr 2fr;
+}
+
+.gamer_profile_all_stats_section .game_stat {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    margin: 5px 20px;
+    justify-items: start;
+    align-items: center;
+    min-height: 40px;
+    border-bottom: 1px solid var(--tertiary1_bg_color);
+    position: relative;
+
+}
+
+.vertical {
+    display: flex !important;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+.vertical .value {
+    width: 100%;
+    text-align: left;
+}
+
+
+.gamer_profile_all_stats_section .game_stat div {
+    display: flex;
+
+}
+
+.gamer_profile_all_stats_section .game_stat i {
+    padding: 0 5px 0 0;
+}
+
+.gamer_profile_all_stats_section .game_stat .label {
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: bold;
+    position: relative;
+    background-color: var(--text-secondary-color);
+    justify-self: start;
+    width: 100%;
+    color: black;
+}
+
+.gamer_profile_all_stats_section .game_stat .value {
+    padding-left: 10px;
+}
+
+.section_divider {
+    width: 90%;
+    height: 2px;
+    background-color: var(--text-secondary-color);
+    margin: 20px auto;
+}
+
+.flexible {
+    height: 100%;
+    display: flex !important;
+
+}
+
+.flexible div {
+    width: 100%;
+}
+
+.value {
+    text-align: left;
+}
+
+.clip_text {
+    word-wrap: break-word;
+}
+
+.stat_container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.bar_label {
+    margin-left: 35px;
+}
+
+.bar_stats {
+    margin: 20px 0;
+}
+
+.bar_stats .label {
+    display: flex;
+    text-align: left;
+    margin: 10px 0;
+    margin-left: 20px;
+    width: 95%;
+    background-color: var(--text-secondary-color);
+    height: 35px;
+    align-items: center;
+    border-radius: 5px;
+    color: black;
+}
+
+.section_info .label i {
+    color: black;
+}
+
+.bar_stats .bar_holder {
+    width: 90%;
+    background-color: var(--tertiary1_bg_color);
+    height: 10px;
+    position: relative;
+    z-index: 1;
+    border-radius: 10px;
+    margin: 10px auto;
+}
+
+.bar_stats .bar_display {
+    width: 70%;
+    background-color: var(--primary_color);
+    height: 10px;
+    position: absolute;
+    z-index: 2;
+    top: 0px;
+    left: 0px;
+    border-radius: 10px;
+}

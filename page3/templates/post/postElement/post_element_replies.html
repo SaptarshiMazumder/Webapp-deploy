@@ -1,0 +1,58 @@
+{% load static %}
+<div class="post">
+    <div>
+        {% include 'post/postElement/post_content_section.html' %}
+
+
+
+        {% if user.is_authenticated %}
+
+        <!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
+
+        <!-- Modal start -->
+
+        <div class="reply-modal-container" id="reply-modal-container">
+            <div class="modal-div">
+                <h1>reply to</h1>
+                {% include 'post/post_replies_form.html' %}
+                <button id="close-modal">CLose modal</button>
+            </div>
+        </div>
+
+        <!-- Modal end -->
+        <div class="post-interact"></div>
+        <button id="like-button" class="like-button" name="{{ post.like_count }}"
+            value="{{ post.id }}">{{post.like_count}}<i class="fa-solid fa-heart"></i>
+        </button>
+
+        <!-- 
+        <a class="reply-button" href="{% url 'upload_reply' post.pk %}" onclick="storeScroll()">
+            {{post.reply_count}}<i class="fa-solid fa-comment"></i></a> -->
+        {%if post.user_profile %}
+        <!-- {{post.user_profile}} -->
+        <button id="open-reply-modal" class="reply-button" value="{{post.pk}}">{{post.reply_count}}<i
+                class="fa-solid fa-comment"></i></button>
+        {%endif %}
+        {% endif %}
+
+        {% if post.is_lft_lfp_post %}
+        <button id="vouch-button" class="vouch-button" name="{{ post.vouch_count }}"
+            value="{{ post.id }}">{{post.vouch_count}}Vouch
+        </button>
+
+        {% endif %}
+        <div>
+            <div style="cursor: pointer;">
+                <a href="{% url 'liked-by' post.id %}"> View Likes</a>
+            </div>
+            {% if post.is_lft_lfp_post %}
+            <div>
+                View Vouches
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<script src="{% static 'PostIT/js/togglePostOptions.js'%}"></script>

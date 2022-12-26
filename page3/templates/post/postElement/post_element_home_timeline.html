@@ -1,0 +1,31 @@
+{% load static %}
+<div class="post">
+    <div>
+        {% include 'post/postElement/post_content_section.html' %}
+
+        {% if user.is_authenticated %}
+
+
+        <div class="post-interact"></div>
+        <button id="like-button" class="like-button" name="{{ post.like_count }}"
+            value="{{ post.id }}">{{post.like_count}}<i class="fa-solid fa-heart"></i>
+        </button>
+
+
+        <a class="reply-button" href="{% url 'upload_reply' post.pk %}" onclick="storeScroll()">
+            {{post.reply_count}}<i class="fa-solid fa-comment"></i></a>
+
+        {% if post.is_lft_lfp_post %}
+        <button id="vouch-button" class="vouch-button" name="{{ post.vouch_count }}"
+            value="{{ post.id }}">{{post.vouch_count}}Vouch
+        </button>
+        <div>
+            View Likes
+        </div>
+        {% endif %}
+
+        {% endif %}
+
+
+    </div>
+</div>

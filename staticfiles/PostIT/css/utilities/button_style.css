@@ -1,0 +1,157 @@
+.add-post-button {
+    /* background-color: var(--tertiary1_bg_color);
+    padding: 7px;
+    border-radius: 20px; */
+
+}
+
+.add-post-button:hover .arrow {
+    color: var(--primary_color);
+}
+
+.add-post-button:hover .fa-plus {
+    color: var(--primary_color);
+}
+
+.post .like-button {
+    padding: 15px;
+}
+
+.post .reply-button {
+    padding: 15px;
+}
+
+.post-header-section .post-options-button {
+    color: #d46ed4;
+    margin-left: auto;
+    display: flex;
+    cursor: pointer;
+
+}
+
+.post-options-list-items button {
+    position: absolute;
+    left: 250px;
+    color: #fff !important;
+}
+
+.reply-button a {
+    text-decoration: none !important;
+}
+
+.gamer_profiles_dropdown button {
+    display: flex;
+    padding: 10px 20px;
+    align-items: center;
+    font-size: medium;
+    font-weight: bold;
+    color: var(--text-secondary-color);
+}
+
+.gamer_profiles_dropdown button:hover {
+    background-color: var(--tertiary1_bg_color);
+    border-radius: 10px;
+}
+
+.gamer_profile_form button {
+    background-color: var(--primary_color);
+    padding: 5px 10px;
+    border-radius: 25px;
+    font-size: small;
+    font-weight: bold;
+}
+
+button {
+    background: none;
+    border: none !important;
+    color: white;
+}
+
+.matchmaking-main button {
+    background-color: #333;
+    padding: 5px 15px;
+    border-radius: 5px;
+    border: #444 solid 1px;
+    margin-top: 20px;
+}
+
+.gamer_profiles_all_stats_dropdown button:hover {
+    background-color: var(--tertiary1_bg_color);
+    border-radius: 10px;
+}
+
+.gamer_profiles_all_stats_dropdown button {
+    display: flex;
+    padding: 10px 20px;
+    align-items: center;
+    font-size: medium;
+    font-weight: bold;
+    color: var(--text-secondary-color);
+}
+
+.button-section button {
+    margin: 0 20px;
+    padding: 10px 20px;
+    width: 140px;
+    background-color: var(--post_bg_color);
+    border: #444 solid 1px;
+    border-radius: 5px;
+}
+
+.profile-interct-button,
+.primary-button {
+    background-color: var(--primary_color);
+    font-size: small;
+    font-weight: bold;
+    border-radius: 25px;
+    padding: 5px 15px;
+    position: relative;
+    top: -5px;
+    /* margin: 5px !important; */
+    /* padding: 5px !important; */
+}
+
+.add-post-community-button {
+    /* border: 1px solid var(--primary_color); */
+    background-color: var(--tertiary1_bg_color);
+    position: relative;
+    width: 80%;
+    border-radius: 50px;
+    /* height: 100%; */
+    height: 50px;
+    margin: auto 0;
+    cursor: pointer;
+    color: var(--text-secondary-color);
+}
+
+.add-post-community-button:hover {
+    border: 1px solid var(--primary_color);
+}
+
+.add-post-community-button:focus {
+    border: 1px solid var(--primary_color);
+}
+
+.add-post-community-button span {
+    position: relative;
+    padding: 0 20px;
+    top: 10px;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.community-members .members-button {
+    border-radius: 25px;
+    background-color: var(--primary_color);
+    padding: 7px;
+    font-size: small;
+    text-align: center;
+    color: var(--text-primary-color);
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.community-members .members-button a {
+    color: inherit;
+}

@@ -1,0 +1,29 @@
+{% load static %}
+
+
+
+<div style="color: #fff;" class="community-header">
+
+
+
+
+
+    <div class="community-header-profile">
+        {% if community.community_header_pic.name %}
+        <img class="community-header-img" src="{{ community.community_header_pic.url}}">
+        {% else %}
+        <div class="community-header-noimg"></div>
+        <!-- <img class="community-header-noimg" src=" {% static 'PostIT/images/profilepic.jpg' %}"> -->
+        {% endif %}
+
+
+
+
+    </div>
+
+
+
+
+
+
+</div>

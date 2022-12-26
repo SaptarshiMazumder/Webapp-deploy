@@ -1,0 +1,253 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Replies
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+{% if parents_arr %}
+{% for parent in parents_arr %}
+{{ parent.author }}<br />
+{{ parent.body|safe }}<br /><br />
+{% endfor %}
+{% endif %}
+
+<br /><br /><br />
+{% if user.is_authenticated %}
+
+{% if replying_to %}
+Replying to
+{% for parent in replying_to %}
+{{ parent.author}}<br />
+{{ parent.body|safe }}
+<br /><br />
+{% endfor %}
+{% endif %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+    {{ hidden }}
+    {% endfor %}
+
+    {% for field in form %}
+    {{ field }}<br />
+    {% endfor %}
+
+    {{ imageform.management_form }}
+
+    {% for form in imageform %}
+    {{ form }}
+    {% endfor %}
+    <button type="submit">Reply</button>
+</form>
+
+
+{% if user.is_authenticated %}
+{% if user.id == post.author.id %}
+<h1>{{ post.title }}</h1><a href="{% url 'edit-post' post.pk %}">Edit</a><br />
+{% endif %}
+{% endif %}
+<small>{{ post.author.first_name }} {{ post.author.last_name }}
+    {{ post.post_date}}</small><br />
+<hr>
+<p>{{ post.body|safe }}</p>
+{% if post.image1 %}
+<img src="{{ post.image1.url}}" width="500">
+{% endif %}
+
+{% if post.has_images %}
+UOUI
+{% for image in image_list %}
+{% if image.post.id == post.id %}
+<img src="{{ image.image.url}}" width="500">
+{% endif %}
+{% endfor %}
+{{ post.imagefiles}}
+{% endif %}
+
+{% if post.video %}
+<video width="500" controls autoplay>
+    <source src="{{post.video.url}}" type="video/mp4">
+</video>
+
+{% endif %}
+<br />
+{% if user.is_authenticated %}
+
+<!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
+<button id="like-button" class="like-button" name="{{ post.like_count }}" value="{{ post.pk }}">LIKED BY
+    {{post.like_count}}</button>
+<a href="{% url 'add-reply' post.pk %}">Text Reply</a>
+<a href="{% url 'add-image-reply' post.pk %}">Image Reply</a>
+<a href="{% url 'add-video-reply' post.pk %}">Video Reply</a>
+
+
+{% endif %}
+<h3>Replies</h3>
+<!-- Replies section start -->
+<br /><br /><br />
+
+{% if replies_to_post %}
+
+
+{% for reply in replies_to_post %}
+<a href="{% url 'post-page' reply.pk %}">{{ reply.title }} </a>
+{{ reply.author}}
+<br />
+{{ reply.body|safe}}
+{% if reply.image1 %}
+<img src="{{ reply.image1.url}}" width="500">
+{% endif %}
+<br />
+
+{% if reply.has_images %}
+UOUI
+{% for image in image_list %}
+{% if image.post.id == reply.id %}
+<img src="{{ image.image.url}}" width="500">
+{% endif %}
+{% endfor %}
+{{ reply.imagefiles}}
+{% endif %}
+
+{% if reply.video %}
+<video width="500" controls autoplay>
+    <source src="{{reply.video.url}}" type="video/mp4">
+</video>
+
+{% endif %}
+<button id="like-button" class="like-button" name="{{ reply.like_count }}" value="{{ reply.pk }}">LIKED BY
+    {{reply.like_count}}</button>
+
+<a href="{% url 'add-reply' reply.pk %}">Text Reply</a>
+<a href="{% url 'add-image-reply' reply.pk %}">Image Reply</a>
+<a href="{% url 'add-video-reply' reply.pk %}">Video Reply</a>
+
+<hr>
+{% endfor %}
+{% endif %}
+<!-- {{ replies }}<br /> -->
+<!-- {% for reply in replies %}
+{{ reply.post_id }}<br />
+{% endfor %} -->
+<!-- Replies section end -->
+
+<br /><br />
+
+<br />
+{% if post.author.profile.profile_pic %}
+<img src="{{ post.author.profile.profile_pic.url}}" width="200">
+{% else %}
+<img src="{% static 'PostIT/images/profilepic.jpg' %}" width="200">
+{% endif %}
+<br />
+{{ post.author }}
+{% if post.author.profile %}
+<a href="{% url 'profile-page' post.author.profile.id %}">Profile Page</a>
+{% endif %}
+<button onclick="history.go(-1)">Back</button>
+<!-- <a href="{% url 'home-page'  %}">Back</a> -->
+
+
+<script>
+    function updateText(btn, no_of_likes) {
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    $(document).on('click', '#like-button', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        postid = this_.attr("value").valueOf()
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "like" %}',
+            data: {
+                postid: postid,
+                // postid: $('#like-button').val(),
+                action: 'post',
+            },
+            success: function (json) {
+                no_of_likes = json['result'];
+                console.log(json)
+                updateText(this_, no_of_likes)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+
+
+</script>
+
+
+<script>
+    function updateText(btn, no_of_likes) {
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    function myfunction() {
+
+        let allLikes = document.getElementsByClassName('like-button');
+
+
+        for (let i = 0; i < allLikes.length; i++) {
+            let attributeValue = allLikes[i].getAttribute('value');
+            console.log(typeof allLikes[i])
+            console.log(attributeValue)
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "set_likes" %}',
+                data: {
+                    postid: attributeValue,
+                    // postid: $('#like-button').val(),
+                    action: 'post',
+                    // postid: '{{ post.pk }}',
+                },
+                success: function (json) {
+
+                    // this.getElementById("like-button").innerHTML = json['result']
+                    // document.getElementsByTagName('{{post.id}}').innerHTML = json['result']
+
+                    // document.getElementById("like_count").innerHTML = json['result'];
+                    // no_of_likes = this_.attr("name").valueOf();
+
+
+                    no_of_likes = json['result'];
+                    //console.log(json)
+                    //updateText(allLikes[i], no_of_likes)
+                    allLikes[i].innerHTML = "LIKED BY" + " " + no_of_likes
+                    console.log("AJAX REQUEST")
+                },
+                error: function (response) {
+
+                }
+            });
+
+
+        }
+        console.log(allLikes)
+
+    }
+
+    const xhr = new XMLHttpRequest()
+    const method = 'GET'
+    const url = "/posts"
+    const responseType = 'json'
+
+    xhr.responseType = responseType
+    xhr.open(method, url)
+    xhr.onload = function () {
+        var listedItems = xhr.response.response
+        console.log(listedItems)
+    }
+</script>
+
+{% else %}
+Login first!
+{% endif %}
+{% endblock content %}

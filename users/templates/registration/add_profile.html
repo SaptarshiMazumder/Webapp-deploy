@@ -1,0 +1,19 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Add Profile Page
+{% endblock title %}
+
+{% block content %}
+<br />
+{% if user.is_authenticated %}
+{{ user }}
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.as_p }}
+    <button type="submit">Post</button>
+</form>
+{% endif %}
+
+{% endblock content %}

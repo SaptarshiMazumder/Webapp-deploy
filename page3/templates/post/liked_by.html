@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Liked By
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+{% include 'navigation/navbar-top.html' %}
+<div class="main-body">
+
+    {% include 'navigation/sidebar-left.html' %}
+    <div class="page-contents">
+
+        <div class="posts-timeline">
+            {% for user in liked_by %}
+            <div>
+
+                <div>
+                    <a href="{%url 'user-posts-page' user %}">
+                        {% if user.profile.profile_pic.name %}
+                        <img src="{{ user.profile.profile_pic.url}}" width="50px">
+                        {% else %}
+
+                        <img src="{% static 'PostIT/images/profilepic.jpg' %}" width="50px">
+                        {% endif %}
+                    </a>
+                </div>
+                <div>
+                    <div>
+                        <a href="{%url 'user-posts-page' user %}">@{{user.username}}</a>
+                    </div>
+                    <div>
+                        {{user.profile.bio}}
+                    </div>
+                </div>
+                <div>
+                    Follow
+                </div>
+
+            </div>
+            {% endfor %}
+
+
+        </div>
+        {% include 'navigation/sidebar.html' %}
+    </div>
+</div>
+{% endblock content %}
+<!-- JS Scripts Here -->

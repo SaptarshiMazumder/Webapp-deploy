@@ -1,0 +1,293 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Community
+{% endblock title %}
+
+{% block content %}
+{% include 'navigation/navbar-top.html' %}
+{% include 'community/community_header.html' %}
+
+<div class="main-body">
+    {% include 'navigation/sidebar-left.html' %}
+
+
+    <div class="page-contents community-page-contents">
+
+
+        <div class="posts-timeline">
+
+            <!-- <br /><br /><br />
+
+            {{user}}
+            {{message}} -->
+            {% include 'community/community_profile_info_holder.html' %}
+
+
+
+            {% if user.is_authenticated %}
+
+
+
+
+            <div class="blocker-page-community" id="blocker-page-community"></div>
+            {% else %}
+            Login first!
+            {% endif %}
+
+            <ul>
+                {% if objects.has_next %}
+                <a class="infinite-more-link" href="?page={{objects.next_page_number}}"></a>
+
+                {% endif %}
+
+
+                <div class="infinite-container" style="background-color: #131212;" id="myDIV">
+                    {% include 'post/addPost/add_post_post.html' %}
+
+                    {% for post in objects %}
+                    {% if not post.is_reply %}
+                    <div class="infinite-item">
+                        <div value="{{ post.id }}">
+                            {% include 'post/postElement/post_element_home_timeline.html' %}
+
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+
+            </ul>
+        </div>
+
+        <div class="sidebar community-sidebar">
+
+            {% include 'community/community_page_sidebar.html' %}
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'PostIT/js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'PostIT/js/infinite.min.js'%}"></script>
+
+
+<script>
+    function addPostCommunityOptionsToggle() {
+
+        var addPostCommunityOptions = document.getElementById("add-post-community-options")
+        var blockerPage = document.getElementById("blocker-page-community")
+
+
+
+        if (addPostCommunityOptions.style.display === "flex") {
+            addPostCommunityOptions.style.display = "none"
+            blockerPage.style.display = "none"
+        }
+        else {
+            addPostCommunityOptions.style.display = "flex"
+            blockerPage.style.display = "flex"
+            blockerPage.style.pointerEvents = "auto"
+        }
+    }
+
+    $(document).on('click', '#blocker-page-community', function (e) {
+
+        var addPostCommunityOptions = document.getElementById("add-post-community-options")
+        var blockerPage = document.getElementById("blocker-page-community")
+
+        addPostCommunityOptions.style.display = "none"
+        blockerPage.style.display = "none"
+
+        blockerPage.style.pointerEvents = "none"
+
+    });
+</script>
+
+<script>
+
+
+    $(document).on('click', '#like-button', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        postid = this_.attr("value").valueOf()
+
+        // var somevar = this_.attr()
+        $.ajax({
+            type: 'POST',
+            url: '{% url "like" %}',
+            data: {
+                postid: postid,
+                // postid: $('#like-button').val(),
+                action: 'post',
+                // postid: '{{ post.pk }}',
+            },
+            success: function (json) {
+
+                // this.getElementById("like-button").innerHTML = json['result']
+                // document.getElementsByTagName('{{post.id}}').innerHTML = json['result']
+
+                // document.getElementById("like_count").innerHTML = json['result'];
+                // no_of_likes = this_.attr("name").valueOf();
+                no_of_likes = json['result'];
+                console.log(json)
+                updateText(this_, no_of_likes)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+
+    function playPauseVideo() {
+        let videos = document.querySelectorAll("video");
+        console.log("VIDEOS" + videos)
+        videos.forEach((video) => {
+            // We can only control playback without insteraction if video is mute
+            video.muted = true;
+            // Play is a promise so we need to check we have it
+            let playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.then((_) => {
+                    let observer = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((entry) => {
+                                if (
+                                    entry.intersectionRatio !== 1 &&
+                                    !video.paused
+                                ) {
+                                    video.pause();
+                                } else if (video.paused) {
+                                    video.play();
+                                }
+                            });
+                        },
+                        { threshold: 0.9 }
+                    );
+                    observer.observe(video);
+                });
+            }
+        });
+    }
+
+
+</script>
+
+
+
+<script>
+
+
+    var infinite = new Waypoint.Infinite({
+        element: $('.infinite-container')[0],
+        offset: 'bottom-in-view',
+        onBeforePageLoad: function () {
+            console.log("Objects loaded before load" + '{{objects}}')
+        },
+        onAfterPageLoad: function () {
+            console.log("Objects loaded after load" + '{{objects.has_previous}}')
+        }
+
+    })
+    function updateText(btn, no_of_likes) {
+        //btn.element.innerHTML = "LIKED BY" + " " + no_of_likes + "lkl"
+        //btn.text("LIKED BY" + " " + no_of_likes + " <h1>JLO</h1>")
+        elem = "<i class='fa-solid fa-heart'></i>"
+        btn[0].innerHTML = no_of_likes + elem
+        console.log(btn[0].innerHTML)
+    }
+
+    window.addEventListener("pageshow", myfunction(event))
+
+    function myfunction(e) {
+        let allLikes = document.getElementsByClassName('like-button');
+
+
+        for (let i = 0; i < allLikes.length; i++) {
+            let attributeValue = allLikes[i].getAttribute('value');
+
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "set_likes" %}',
+                data: {
+                    postid: attributeValue,
+                    // postid: $('#like-button').val(),
+                    action: 'post',
+                    // postid: '{{ post.pk }}',
+                },
+                success: function (json) {
+
+
+                    // this.getElementById("like-button").innerHTML = json['result']
+                    // document.getElementsByTagName('{{post.id}}').innerHTML = json['result']
+
+                    // document.getElementById("like_count").innerHTML = json['result'];
+                    // no_of_likes = this_.attr("name").valueOf();
+
+
+                    no_of_likes = json['result'];
+                    //console.log(json)
+                    //updateText(allLikes[i], no_of_likes)
+                    //allLikes[i].innerHTML = "LIKED BY" + " " + no_of_likes
+                    //console.log("AJAX LIKES UPDATE REQUEST")
+
+                    updateText(allLikes[i], no_of_likes)
+                },
+                error: function (response) {
+
+                }
+            });
+
+
+        }
+        console.log(allLikes)
+
+    }
+
+
+    function storeScroll() {
+
+        scrollPos = window.pageYOffset
+        localStorage.setItem("scrollPosition", scrollPos);
+        localStorage.setItem("loadedPosts", '{{objects}}')
+        console.log(localStorage.getItem("loadedPosts"))
+        console.log(localStorage.getItem("scrollPosition"))
+        console.log("Scroll position Y: " + scrollPos)
+    }
+
+    //window.addEventListener("pageshow", scrollToPos);
+
+    function scrollToPos() {
+        //e.preventDefault()
+        //const element = document.getElementById("myDIV");
+        //alert("Attempt Scroll" + element)
+        //element.scrollLeft = 5000;
+        //element.scrollTop = 3000;
+        console.log(localStorage.getItem("scrollPosition"))
+        //if ('scrollRestoration' in window.history) {
+        //  console.log(window.history.scrollRestoration)
+        window.history.scrollRestoration = 'manual'
+        window.scrollTo(0, localStorage.getItem("scrollPosition"))
+        //}
+        setTimeout(function () { console.log("gjhkljhvjkl") })
+
+        //alert("Attempt Scroll")
+        //$("html, body").animate({ scrollTop: parseInt(localStorage.getItem("scrollPosition")) }, 2000);
+        //setTimeout(function () { window.scrollTo(0, parseInt(localStorage.getItem("scrollPosition"))) }, 200)
+        //setTimeout(function () { $("html, body").animate({ scrollTop: parseInt(localStorage.getItem("scrollPosition")) }, 2000); }, 200)
+        //$("html, body").animate({ scrollTop: 5000 }, 2000);
+        //window.scroll(0, parseInt(localStorage.getItem("scrollPosition")))
+        //window.scrollTo(0, parseInt(localStorage.getItem("scrollPosition")));
+
+
+    }
+
+
+</script>
+
+
+
+
+<script src="{% static 'PostIT/js/togglePostOptions.js'%}"></script>
+{% endblock content %}

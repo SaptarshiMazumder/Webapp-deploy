@@ -1,0 +1,47 @@
+{% load static %}
+
+<div class="profile-info-holder">
+    <div class="profile-info">
+        <div class="profile-pic">
+            {% if community.profile_pic.name %}
+            <img src="{{ community.profile_pic.url}}">
+            {% else %}
+            <img src=" {% static 'PostIT/images/profilepic.jpg' %}">
+            {% endif %}
+
+
+        </div>
+        <div class="profile-info-menu">
+            <div class="profile-info-menu-left">
+                <div class="community-name">
+                    <h5><b>{{ community.name }}</b></h5>
+                </div>
+                <div>
+                    <button class="profile-interct-button">Joined</button>
+                </div>
+            </div>
+            <div class="profile-info-menu-right">
+
+                <div class="info">
+                    <div class="number">{{community.members.count}}</div>
+                    <div class="label">Members</div>
+                </div>
+                <div class="info">
+                    <div class="number">3.2k</div>
+                    <div class="label">Online</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="profile-info-tabs">
+        <div class="item selected-tab">
+            Posts
+        </div>
+        <div class="item">Members</div>
+        <div class="item">Rules</div>
+        <div class="item">Discord</div>
+
+    </div>
+</div>

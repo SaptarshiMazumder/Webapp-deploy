@@ -1,0 +1,84 @@
+{% load static %}
+
+<div class="sidebar-section">
+    <div class="sidebar-section-title">
+        About Community
+    </div>
+    <div class="community-info">
+
+        {{community.bio}}
+        <br><br>
+        <div class="creation-date">
+            <i class="fa-regular fa-calendar-days"></i>Created : {{community.post_date}}
+        </div>
+    </div>
+
+    <div class="members_info">
+        <div class="community-admin">
+            <!-- Created by: {{community.created_by}} -->
+            {%if user == community.created_by%}
+            <a href="{% url 'edit-community' community.id %}">Edit Community</a>
+
+            {%endif%}
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-section">
+    <div class="sidebar-section-title">
+        Community Rules
+    </div>
+    <div class="community-rules">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eligendi cum natus accusamus et blanditiis amet
+        praesentium perferendis recusandae veritatis ex? Mollitia doloribus nesciunt voluptatum iste error
+        necessitatibus recusandae in minima suscipit, pariatur libero consectetur, non, quisquam ex. Vitae, quibusdam
+        mollitia. Recusandae nesciunt dolores, earum magni quasi repudiandae nemo quam asperiores rem labore possimus
+        tempora cumque quidem distinctio ab maiores fuga ratione placeat mollitia atque ad nihil nulla eos! Iure
+        reprehenderit commodi error placeat ipsum deleniti consequatur, labore illum vel earum?
+    </div>
+</div>
+
+<div class="sidebar-section">
+    <div class="sidebar-section-title">
+        Members ({{community.members.count}})
+    </div>
+    <div class="community-members">
+        <div class="members-list">
+            {% for member in community.members.all %}
+
+            <div class="item">
+                <div class="member-profile-pic">
+                    {% if member.profile.profile_pic.name %}
+                    <a href="{% url 'user-posts-page' member %}"><img src="{{ member.profile.profile_pic.url}}"></a>
+
+                    {% else %}
+                    <a href="{% url 'user-posts-page' member %}">
+                        <img src="{% static 'PostIT/images/profilepic.jpg' %}"></a>
+                    {% endif %}
+                </div>
+                <div class="member-username">
+
+                    <a href="{% url 'user-posts-page' member %}">
+                        {{member}}
+                    </a>
+                </div>
+            </div>
+
+
+            {% endfor %}
+        </div>
+        <br>
+        <div class="members-button">
+            <a href="{% url 'community-page' community.id %}">
+                View All
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<div class="sidebar-section">
+    <div class="sidebar-section-title">
+
+    </div>
+</div>

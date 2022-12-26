@@ -1,0 +1,165 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 Homepage
+{% endblock title %}
+
+{% block content %}
+
+<div class="main-body">
+    <br>
+    <div class="button-section">
+        <button id="people_btn">People</button>
+        <button id="posts_btn">Posts</button>
+    </div>
+    <div class="page-contents">
+
+        <div class="sidebar" style="visibility: hidden;">
+
+        </div>
+        <div id="people-list" class="posts-timeline">
+            <ul>
+                <h1>Search Results for: {{search_query}}</h1>
+                {%for person in people_list%}
+                <li class="post" id="people-list">
+                    <div class="profile-pic">
+                        <a href="{%url 'user-posts-page' person.user.username%}"><img src="media/{{person.profile_pic}}"
+                                width="500"></a>
+                        <div class="username"> {{person.user.username}}</div>
+                    </div>
+                    <hr>
+                    <div class="person-info">
+                        <div>{{person.bio}}</div>
+                    </div>
+
+                </li>
+                {%endfor%}
+            </ul>
+        </div>
+        <div id="posts_list">
+            <div class="posts-timeline">
+                <ul>
+                    <h1>Search Results for: {{search_query}}</h1>
+                    {%for post in posts_list%}
+                    <div class="infinite-item">
+                        <div value="{{ post.id }}">
+                            <li class="post">
+                                <div>
+                                    <div class="post-category-section">
+                                        <i class="fa-solid fa-earth-oceania"></i>
+
+                                        <a class="post-category" href="{% url 'posts-by-category' post.category%}">
+                                            {{post.category}}</a> <small>
+                                            {{post.id}}</small>
+                                    </div>
+                                    <section class="post-top-part">
+                                        {% for p in profiles %}
+                                        {%if p.user == post.author%}
+                                        <div class="profile-pic">
+                                            <a href="{%url 'user-posts-page' post.author%}"><img
+                                                    src="media/{{p.profile_pic}}" width="500"></a>
+                                        </div>
+                                        {%endif%}
+                                        {% endfor %}
+                                        <span class="author-date">{{post.author}} <span class="date">
+                                                {{post.post_date}}
+                                            </span> </span>
+                                    </section>
+
+                                    {{post.title}}
+
+
+                                    {% if user.is_authenticated %}
+                                    {% if user.id == post.author.id %}
+                                    {% if post.has_video %}
+                                    <a href="{% url 'edit-video-post' post.pk %}">Edit</a>
+                                    {% elif post.has_images %}
+                                    <a href="{% url 'edit-image-post' post.pk %}">Edit</a>
+                                    {% else %}
+                                    <a href="{% url 'edit-post' post.pk %}">Edit</a>
+                                    {% endif %}
+
+                                    <a href="{% url 'delete-post' post.pk %}">Delete</a>
+                                    <!-- <button id="like-button" value="{{ post.pk }}">Like</button> -->
+                                    {% endif %}
+                                    {% endif %}
+                                    <hr>
+                                    <a class="post-title" onclick="storeScroll()"
+                                        href="{% url 'upload_reply' post.pk %}">
+                                        {{post.body|safe}}</a>
+
+                                    {%for t in post.get_Tag%}
+                                    {{t}}
+                                    {%endfor%}
+
+                                    {% if post.image1 %}
+                                    <img src="{{ post.image1.url}}" width="500">
+                                    {% endif %}
+
+
+                                    <div class="images">
+                                        {% if post.has_images %}
+                                        {% for image in image_list %}
+                                        {% if image.post.id == post.id %}
+                                        <img src="{{ image.image.url}}">
+                                        {% endif %}
+                                        {% endfor %}
+                                        {{ post.imagefiles}}
+                                        {% endif %}
+                                    </div>
+                                    {% if post.video %}
+                                    <video class="post-video" width="500" controls autoplay>
+                                        <source src="{{post.video.url}}" type="video/mp4">
+                                    </video>
+
+                                    <!-- <a href="{{post.video.url}}">Link</a> -->
+
+                                    {% endif %}
+                                    <br />
+
+                                    <!-- {{ post.likes.count }} likes
+                                {{ post.liked_by }} -->
+
+
+
+                                    {% if user.is_authenticated %}
+
+                                    <!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
+                                    <button id="like-button" class="like-button" name="{{ post.like_count }}"
+                                        value="{{ post.id }}"><i class="fa-solid fa-heart"></i>
+                                        {{post.like_count}}</button>
+
+
+                                    <a href="{% url 'upload_reply' post.pk %}" onclick="storeScroll()">Reply</a>
+
+                                    {% endif %}
+
+
+                                </div>
+                            </li>
+                        </div>
+                    </div>
+                    {%endfor%}
+            </div>
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="{% static 'PostIT/js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'PostIT/js/infinite.min.js'%}"></script>
+
+<script>
+    $('#people-list').hide();
+    $('#people_btn').click(function () {
+        $('#posts_list').hide();
+        $('#people-list').show();
+    });
+    $('#posts_btn').click(function () {
+        $('#people-list').hide();
+        $('#posts_list').show();
+    });
+</script>
+
+{% endblock content %}

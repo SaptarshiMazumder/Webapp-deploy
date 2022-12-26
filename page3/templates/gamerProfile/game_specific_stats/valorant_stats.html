@@ -1,0 +1,150 @@
+{%for g in selected_gamer_profiles%}
+<div class="divided_section">
+    <div class="section_info left_section">
+        <div class="game_display_name" style="display: none;">{{g.game}}</div>
+
+        <div class="game_stat">
+            <div class="label"><i class="fa-solid fa-user"></i>{{g.game}} User ID :</div>
+            <div class="value small_text">{{g.in_game_user_id}}</div>
+        </div>
+
+        <div class="game_stat">
+            <div class="label"><i class="fa-solid fa-ranking-star"></i>Rank :</div>
+            <div class="value">{{g.rank}}</div>
+        </div>
+
+        <div class="game_stat">
+            <div class="label"><i class="fa-solid fa-location-dot"></i> Server :</div>
+            <div class="value"> {{g.server}}</div>
+        </div>
+        <div class="game_stat ">
+            <div class="label"><i class="fa-solid fa-clock"></i> Availability :</div>
+            <div class="value flexible"> {{g.time_available}}</div>
+        </div>
+
+    </div>
+    <div class="section_info right_section">
+        <div class="game_stat">
+            <div class="label"><i class="fa-solid fa-server"></i>Allow Matchmaking :</div>
+            {%if g.looking_for_friends %}
+            <div class="value"><i class="fa-solid fa-toggle-on"></i></div>
+            {%else%}
+            <div class="value"><i class="fa-solid fa-toggle-off"></i></div>
+            {%endif%}
+
+        </div>
+        <div class="game_stat">
+            <div class="label"><i class="fa-solid fa-business-time"></i>Years of Experience :</div>
+            <div class="value">{{g.years_of_exp}}</div>
+        </div>
+        <div class="game_stat">
+            <div class="label"><i class="fa-solid fa-mars-stroke-up"></i> Status : </div>
+            <div class="value">{{g.user_status}}</div>
+        </div>
+    </div>
+</div>
+
+<div class="section_divider"></div>
+<div class="divided_section mid_section">
+    <div class="section_info experience_info">
+        {%for item in g.experience%}
+        <div class="game_stat">
+            <div class="label">
+                Team/ Org
+            </div>
+            <div class="value">
+                {{item.0}}
+            </div>
+        </div>
+        <div class="game_stat">
+            <div class="label">
+                Experience/ Role
+            </div>
+            <div class="value">
+                {{item.1}}
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+    <div class="section_info ">
+        {%for item in additional_info%}
+        {% if item.game == 'Valorant' %}
+        <div class="game_stat">
+            <div class="label">
+                Preferred Agents:
+            </div>
+            <div class="value">
+                {{item.info.0}}
+            </div>
+        </div>
+        <div class="game_stat">
+            <div class="label">
+                Peak Rank:
+            </div>
+            <div class="value">
+                {{item.info.1}}
+            </div>
+        </div>
+        {%endif%}
+        {%endfor%}
+    </div>
+</div>
+<div class="full_width_section">
+    <div class="section_info bottom_section">
+        <div class="game_stat flexible">
+            <div class="label"><i class="fa-solid fa-business-time"></i>Achievements :</div>
+            <div class="value">{{g.achievements}}</div>
+        </div>
+        <div class="bar_stats">
+            <div class="label"><i class="fa-brands fa-magento"></i>Roles :</div>
+
+            {%for label, value in saved_roles_rating%}
+            <div class="stat_container">
+                <div class="bar_label">{{label}}</div>
+                <div class="bar_holder" id='{{label}}{{"_bar"}}'>
+                    <div class="bar_display"></div>
+                    <div class="bar_value" style="display: none;">{{value}}</div>
+                </div>
+            </div>
+            {%endfor%}
+        </div>
+        <div class="game_stat vertical">
+            <div class="label"><i class="fa-solid fa-book"></i> Note : </div>
+            <div class="value">{{g.remarks}}</div>
+        </div>
+
+        <div class="bar_stats">
+            <div class="label"><i class="fa-brands fa-magento"></i>Communication level :</div>
+            <div class="stat_container">
+
+                <div class="bar_holder" id="communication_level_bar">
+                    <div class="bar_display"></div>
+                    <div class="bar_value" style="display: none;">{{g.communication_level}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%endfor%}
+
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',
+            url: `/get_saved_gamerank_server/Valorant`,
+            success: function (response) {
+                for (let i = 0; i < response['default_roles'].length; i++) {
+                    let multiplier_value = $(`#${response['default_roles'][i]}_bar`)
+                        .find('.bar_value').text();
+                    console.log(multiplier_value)
+                    $(`#${response['default_roles'][i]}_bar`)
+                        .find('.bar_display').css('width', `${(multiplier_value / 5) * 100}%`)
+                }
+
+                let communication_level_val = $('#communication_level_bar').
+                    find($('.bar_value')).text();
+                $('#communication_level_bar').find('.bar_display').css('width', `${(communication_level_val / 5) * 100}%`)
+            }
+        })
+    })
+</script>

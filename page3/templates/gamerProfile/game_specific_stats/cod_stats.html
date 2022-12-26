@@ -1,0 +1,31 @@
+{%for g in selected_gamer_profiles%}
+<div>
+    <div class="game_display_name" style="display: none;">{{g.game}}</div>
+    <div class="game_stat">
+        <span class="label"><i class="fa-solid fa-ranking-star"></i>Rank:</span>
+        <span>
+            {{g.rank}}</span>
+    </div>
+    <div class="game_stat">
+        <span class="label"><i class="fa-solid fa-server"></i>Server:</span>
+        <span>
+            {{g.server}}</span>
+    </div>
+    <div class="game_stat">
+        <span class="label"><i class="fa-solid fa-server"></i>Allow Matchmaking:</span>
+        <span>
+            <i class="fa-solid fa-toggle-on"></i></span>
+    </div>
+</div>
+{%endfor%}
+
+{%for item in additional_info%}
+{% if item.game == 'Call of Duty' %}
+Preferred Guns:
+{{item.info.0}}
+<br>
+Preferred Maps:
+{{item.info.1}}
+{%endif%}
+<br>
+{%endfor%}

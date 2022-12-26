@@ -1,0 +1,69 @@
+<div class="post add-post-post">
+    <div class="post-header-section">
+        <div class="profile-pic">
+            {%if user.profile.profile_pic.name %}
+            <a href="{%url 'user-posts-page' user %}"><img src="{{ user.profile.profile_pic.url }}" width="500"></a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="add-post-community-button" onclick="addPostCommunityOptionsToggle()">
+        <span>
+            <div>Add Post</div><i class="fa-solid fa-angle-down"></i>
+        </span>
+
+        <div class="add-post-community-options-holder">
+            <div class="add-post-community-options" id="add-post-community-options">
+                {%if community %}
+                <ul>
+
+                    <a class="create-post" href="{% url 'add-post-community' community.id %}">
+
+                        <li class="add-post-community-option">
+                            <i class="fa-solid fa-feather"></i>
+                            TextPost
+                        </li>
+                    </a>
+
+                    <a href="{% url 'add-image-post-community' community.id %}">
+                        <li class="add-post-community-option"><i class="fa-regular fa-image "></i>Image Post
+                        </li>
+                    </a>
+
+                    <a href="{% url 'add-video-post-community' community.id %}">
+                        <li class="add-post-community-option"><i class="fa-solid fa-video "></i>Video Post</li>
+                    </a>
+
+                </ul>
+                {% else %}
+                <ul>
+
+                    <a class="create-post" href="{% url 'add-post' %}">
+
+                        <li class="add-post-community-option">
+                            <i class="fa-solid fa-feather"></i>
+                            TextPost
+                        </li>
+                    </a>
+
+                    <a href="{% url 'add-image-post' %}">
+                        <li class="add-post-community-option"><i class="fa-regular fa-image "></i>Image Post
+                        </li>
+                    </a>
+
+                    <a href="{% url 'add-video-post' %}">
+                        <li class="add-post-community-option"><i class="fa-solid fa-video "></i>Video Post</li>
+                    </a>
+
+                </ul>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+
+    </div>
+    <div>
+        <i class="fa-solid fa-newspaper"></i>
+    </div>
+</div>

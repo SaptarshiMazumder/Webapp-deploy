@@ -1,0 +1,95 @@
+{% load static %}
+<div class="sidebar-section">
+    <div class="communities-section-sidebar">
+        {% if user.is_authenticated %}
+        <div class="sidebar-section-title">
+            Featured communities
+
+        </div>
+
+        <table class="community-table-sidebar">
+            {%for community in communities %}
+            <tr class="community-item-sidebar">
+                <div class="community-item-sidebar-row">
+                    <td class="community-profile-pic-sidebar">
+                        {% if community.profile_pic.name %}
+                        <a href="{% url 'community-page' community.id %}"><img src="{{ community.profile_pic.url}}"></a>
+
+                        {% else %}
+                        <a href="{% url 'community-page' community.id %}">
+                            <img src="{% static 'PostIT/images/profilepic.jpg' %}"></a>
+                        {% endif %}
+                    </td>
+                    <td class="community-name-sidebar">
+                        <a href="{% url 'community-page' community.id %}">
+                            {{ community }}</a>
+                    </td>
+                    <td>
+                        {% if community in joined_communities %}
+                        <!-- Previosuly class was "button" -->
+                        <b><button id="join-community-button" value="{{community.id}}"><b>Joined</b></button></b>
+                        {% else %}
+                        <b><button id="join-community-button" value="{{community.id}}"><b>Join</b></button></b>
+                        {% endif %}
+                    </td>
+                </div>
+            </tr>
+
+
+            <!-- <br /> -->
+            {% endfor %}
+        </table>
+        <br />
+        <button><b>View All</b></button>
+        {% endif %}
+        <!-- {%for joined_community in joined_communities %}
+
+    {{joined_community.id}}
+    {% endfor %} -->
+
+    </div>
+</div>
+
+<script>
+    function updateCommunityButtonText(btn, buttonText) {
+        //btn.element.innerHTML = "LIKED BY" + " " + no_of_likes + "lkl"
+        //btn.text("LIKED BY" + " " + no_of_likes + " <h1>JLO</h1>")
+        //elem = "<i class='fa-solid fa-heart'></i>"
+        btn[0].innerHTML = "<b>" + buttonText + "</b>"
+        console.log(btn[0].innerHTML)
+    }
+
+    $(document).on('click', '#join-community-button', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        community_id = this_.attr("value").valueOf()
+
+        // var somevar = this_.attr()
+        $.ajax({
+            type: 'POST',
+            url: '{% url "join_community" %}',
+            data: {
+                community_id: community_id,
+                // postid: $('#like-button').val(),
+                action: 'post',
+                // postid: '{{ post.pk }}',
+            },
+            success: function (json) {
+
+                // this.getElementById("like-button").innerHTML = json['result']
+                // document.getElementsByTagName('{{post.id}}').innerHTML = json['result']
+
+                // document.getElementById("like_count").innerHTML = json['result'];
+                // no_of_likes = this_.attr("name").valueOf();
+                buttonText = json['buttonText'];
+                console.log(json)
+                updateCommunityButtonText(this_, buttonText)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+
+</script>

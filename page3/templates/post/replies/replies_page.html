@@ -1,0 +1,323 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Replies
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+{% include 'navigation/navbar-top.html' %}
+<div class="main-body">
+
+    {% include 'navigation/sidebar-left.html' %}
+    <div class="page-contents">
+
+        <div class="posts-timeline">
+            {% include 'post/postElement/post_element_replies.html' %}
+            <div id="replies-section">
+                {% include 'post/replies/replies_list.html' %}
+            </div>
+        </div>
+        {% include 'navigation/sidebar.html' %}
+    </div>
+</div>
+
+<!-- JS Scripts Here -->
+
+<script>
+
+
+    function updateText(btn, no_of_likes) {
+        //btn.element.innerHTML = "LIKED BY" + " " + no_of_likes + "lkl"
+        //btn.text("LIKED BY" + " " + no_of_likes + " <h1>JLO</h1>")
+        elem = "<i class='fa-solid fa-heart'></i>"
+        btn[0].innerHTML = no_of_likes + elem
+        console.log(btn[0].innerHTML)
+    }
+    $(document).on('click', '#like-button', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        postid = this_.attr("value").valueOf()
+
+
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "like" %}',
+            data: {
+                postid: postid,
+                // postid: $('#like-button').val(),
+                action: 'post',
+            },
+            success: function (json) {
+                no_of_likes = json['result'];
+                console.log(json)
+                updateText(this_, no_of_likes)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+
+
+</script>
+
+<script>
+    function updateText(btn, no_of_likes) {
+        //btn.element.innerHTML = "LIKED BY" + " " + no_of_likes + "lkl"
+        //btn.text("LIKED BY" + " " + no_of_likes + " <h1>JLO</h1>")
+        elem = "<i class='fa-solid fa-heart'></i>"
+        btn[0].innerHTML = no_of_likes + elem
+        console.log(btn[0].innerHTML)
+    }
+    function updateLikes() {
+
+        let allLikes = document.getElementsByClassName('like-button');
+
+
+        for (let i = 0; i < allLikes.length; i++) {
+            let attributeValue = allLikes[i].getAttribute('value');
+            console.log(typeof allLikes[i])
+            console.log(attributeValue)
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url "set_likes" %}',
+                data: {
+                    postid: attributeValue,
+                    // postid: $('#like-button').val(),
+                    action: 'post',
+                    // postid: '{{ post.pk }}',
+                },
+                success: function (json) {
+                    no_of_likes = json['result'];
+                    //console.log(json)
+                    //updateText(allLikes[i], no_of_likes)
+                    allLikes[i].innerHTML = "LIKED BY" + " " + no_of_likes
+                    console.log("AJAX REQUEST")
+                },
+                error: function (response) {
+
+                }
+            });
+
+
+        }
+        console.log(allLikes)
+
+    }
+
+    const xhr = new XMLHttpRequest()
+    const method = 'GET'
+    const url = "/posts"
+    const responseType = 'json'
+
+    xhr.responseType = responseType
+    xhr.open(method, url)
+    xhr.onload = function () {
+        var listedItems = xhr.response.response
+        console.log(listedItems)
+    }
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript">
+    // form upload
+
+    const modalContainer = document.getElementById("reply-modal-container");
+    const close = document.getElementById("close-modal");
+
+
+    $(document).on('click', '#open-reply-modal', function (e) {
+        var this_ = $(this);
+        postid = this_.attr("value").valueOf();
+        console.log("POSTID: " + postid)
+        modalContainer.classList.add('show');
+    });
+
+
+
+
+    close.addEventListener('click', () => {
+        modalContainer.classList.remove('show');
+    });
+
+
+    $('#id_ajax_upload_form').submit(function (e) {
+        e.preventDefault();
+        $form = $(this)
+        var formData = new FormData(this);
+
+        //var this_ = $(this)
+        //postid = this_.attr("value").valueOf()
+        formData.append('postid', postid)
+        $.ajax({
+            url: window.location.pathname,
+            type: 'POST',
+            data: formData,
+
+            success: function (response) {
+                //alert("JKJJK")
+                $("#replies-section").html(response['replies_list']);
+                $("#id_title").val('');
+                $("#id_body").val('');
+                $("#id_image").val('');
+                //console.log($("#id_image").val())
+                //$("#id_category").val('');
+                modalContainer.classList.remove('show');
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+
+    $('#id_ajax_upload_form2').submit(function (e) {
+        e.preventDefault();
+        $form = $(this)
+        var formData = new FormData(this);
+        //var this_ = $(this)
+        //postid = this_.attr("value").valueOf()
+        formData.append('postid', postid)
+        $.ajax({
+            url: window.location.pathname,
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                //alert("JKJJK")
+                $("#replies-section").html(response['replies_list']);
+                $("#id_title").val('');
+                $("#id_body").val('');
+                $("#id_video").val('');
+                //console.log($("#id_image").val())
+                //$("#id_category").val('');
+                modalContainer.classList.remove('show');
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+    // end
+</script>
+
+<script>
+    window.addEventListener("pageshow", hideVidForm);
+
+    function hideVidForm() {
+        document.getElementById("vid-form").style.display = 'none';
+    }
+
+
+    document.getElementById('toggle-media-type').addEventListener('click', function () {
+        let elem = document.getElementById('toggle-media-type');
+        form1 = document.getElementById("img-form")
+        form2 = document.getElementById("vid-form")
+        if (elem.innerHTML == "Add video") {
+            elem.innerHTML = "Add images";
+
+            form1.style.display = 'none';
+            form2.style.display = 'block';
+        }
+        else {
+            elem.innerHTML = "Add video";
+            form1.style.display = 'block';
+            form2.style.display = 'none';
+        }
+
+    })
+</script>
+
+<script>
+    $(document).on('click', '#show-replies', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        postid = this_.attr("value").valueOf()
+
+
+
+        $.ajax({
+            type: 'POST',
+            url: '{% url "fetch_replies_to_reply" %}',
+            data: {
+                postid: postid,
+                // postid: $('#like-button').val(),
+                action: 'post',
+            },
+            success: function (json) {
+
+                console.log(json['replies_list'])
+                let repliesHolders = document.getElementsByClassName('replies-holder');
+                for (let i = 0; i < repliesHolders.length; i++) {
+                    let attributeValue = repliesHolders[i].getAttribute('value');
+                    console.log(typeof repliesHolders[i])
+                    console.log(typeof attributeValue)
+                    console.log(attributeValue)
+                    if (postid === attributeValue) {
+                        console.log("This one!")
+                        let elem = repliesHolders[i];
+                        var child = elem.lastElementChild;
+                        while (child) {
+                            elem.removeChild(child);
+                            child = elem.lastElementChild;
+                        }
+                        //var repliesList = document.createElement("div")
+                        //repliesList.id = "replies-div"
+                        //$("#replies-div").innerHTML = "Yahallo"
+                        //console.log($('#replies-div').text())
+                        elem = repliesHolders[i]
+                        var id = 'replyTo' + postid
+
+                        elem.setAttribute('id', id)
+
+                        $("#" + id).html(json['replies_list'])
+
+                        var div = document.getElementById(id)
+                        console.log("DIVV:", div)
+                        if (div.style.display === "none") {
+                            div.style.display = "block"
+                            console.log("THIS: ", this_)
+                            console.log()
+
+                        }
+                        else {
+                            div.style.display = "none"
+                        }
+
+
+                        //elem.html(json['replies_list']);
+
+                        //$("#replies-holder").html(json['replies_list']);
+                        //repliesList.html(json['replies_list'])
+                        //elem.appendChild(repliesList)
+
+                    }
+                }
+
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    });
+</script>
+
+<script>
+    function toggleReplies(e) {
+
+
+        if (e.includes("Show")) {
+            return e.replace("Show", "Hide")
+        }
+        else {
+            return e.replace("Hide", "Show")
+        }
+    }
+</script>
+
+{% endblock content %}

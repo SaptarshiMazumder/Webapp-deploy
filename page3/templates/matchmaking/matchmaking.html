@@ -1,0 +1,128 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Create Gamer Profile
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+{%load static%}
+
+<body class="main-body">
+    {% if user.is_authenticated %}
+    <div class="matchmaking-main">
+        <h1>Start Matchmaking <div id="currentuser">{{user.username}}</div>
+        </h1>
+        <form action="" method="POST" enctype="multipart/form-data" id="matchmaking-form">
+
+            {% csrf_token %}
+            <div class="matchmaking-item">
+                <div> Preferred Game</div>
+                <div class="game">{{form.game}}</div>
+            </div>
+            <hr />
+            <div class="matchmaking-item">
+                <div> Preferred Server</div>
+                <select class="servers" form="matchmaking-form"></select>
+            </div>
+            <hr />
+
+            <div class="matchmaking-item">
+                <div> Preferred Rank to pair with</div>
+                <select class="ranks" form="matchmaking-form">Enter preferred rank to pair with</select>
+            </div>
+
+
+            <button type="submit" name="submit-btn">Create</button>
+        </form>
+    </div>
+    {{profiles}}
+
+
+    <div class="profiles-section">
+        {%include 'matchmaking/matchmaking_found_list.html' %}
+    </div>
+
+    {% else %}
+    Login first!
+    {% endif %}
+
+</body>
+<script src="{% static 'PostIT/js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'PostIT/js/infinite.min.js'%}"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $('.game select').attr("placeholder", "");
+
+
+        $('.game select').click(function () {
+            var pref_game = $('.game select').val();
+            console.log([pref_game]);
+            $.ajax({
+                type: 'GET',
+                url: `/getgamerank_server/${pref_game}`,
+                success: function (response) {
+
+                    $('.ranks').empty();
+                    for (let i = 0; i < response['ranks'].length; i++) {
+
+                        $('.ranks').append(`<option>${response['ranks'][i][0]}</option>`)
+                    }
+                    $('.ranks').val($('.ranks option:last').val());
+
+                    $('.servers').empty();
+                    for (let i = 0; i < response['servers'].length; i++) {
+
+                        $('.servers').append(`<option>${response['servers'][i][0]}</option>`)
+                    }
+                    $('.servers').val($('.servers option:last').val());
+
+                },
+                error: function (response) {
+                    //alert("Error getting ranks and servers")
+                }
+            })
+        })
+    });
+
+    $(document).on('submit', '#matchmaking-form', function (e) {
+        e.preventDefault();
+        var pref_game = $('.game select').val();
+        var user_name = $('#currentuser').text();
+        console.log(user_name)
+        $.ajax({
+            type: 'POST',
+            url: `/matchmaking_data/${user_name}`,
+            data: {
+                game: pref_game,
+                rank: $('.ranks').val(),
+                server: $('.servers').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (response) {
+                $('.gamer_profiles').empty();
+                console.log(response['profiles'])
+                $('.profiles-section').html(response['profiles']);
+
+                //for(let i=0; i< response['profiles'].length; i++)
+                //{   
+                // const el = document.createElement('div');
+                // el.setAttribute('id', 'my-id');
+
+
+                // $('.gamer_profiles').append(`<img src="/media/${response['profiles'][i]['profile_pic']}"/>`)
+                // $('.gamer_profiles').append(`<div>${response['profiles'][i]['bio']}</div>`)
+                // $('.gamer_profiles').append(`<div>User Status: ${response['profiles'][i]['user_status']}</div>`)
+                // $('.gamer_profiles').appendTo(".gameprofile-wrapper");
+                //}
+
+
+            }
+        }
+        )
+
+    })
+</script>
+{% endblock content %}

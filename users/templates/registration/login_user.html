@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Login
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+Login page
+{% if messages %}
+
+{% for message in messages %}
+
+<div class="alert alert-warning" role="alert">
+    {{ message }}
+    <!-- <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> -->
+</div>
+{% endfor %}
+
+{% endif %}
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">username</label>
+        <input type="text" class="form-control" name="username" aria-describedby="emailHelp">
+        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Password</label>
+        <input type="password" class="form-control" name="password">
+    </div>
+
+    <input type="submit" value="Submit" class="btn btn-primary">
+</form>
+{% endblock content %}

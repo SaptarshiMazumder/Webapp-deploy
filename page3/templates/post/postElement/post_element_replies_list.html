@@ -1,0 +1,96 @@
+{% load static %}
+{% include 'post_content_section.html' %}
+<!-- <div class="post-category-section">
+    <i class="fa-solid fa-puzzle-piece"></i>
+    <a class="post-category">
+        {{reply.category}}</a>
+    {{reply.id}}
+</div>
+
+<section class="post-header-section">
+    <div class="profile-pic">
+        {%if reply.user_profile.profile_pic.name %}
+        <a href="{%url 'posts-by-user' reply.author%}"><img src="{{ reply.user_profile.profile_pic.url }}"
+                width="500"></a>
+        {% endif %}
+    </div>
+
+    <span class="post-profile-section">{{reply.author}} <span class="date">
+            {{reply.post_date}}
+        </span> </span>
+
+    <span class="post-options-button" value="{{reply.id}}">
+
+        <div class="post-options-list " id="post-options-list" value="{{reply.id}}">
+            <div class="blocker" id="blocker" value="{{reply.id}}"></div>
+            <div class="post-options-list-items">
+                <button id="post-options-list-close" value="{{reply.id}}"><i class="fa-solid fa-xmark"></i></button>
+                <ul>
+                    {% if user.is_authenticated %}
+                    {% if user.id == reply.author.id %}
+
+                    <li><a href="{% url 'delete-post' reply.pk %}">Delete</a>
+                    </li>
+                    {% endif %}
+
+                    <li>Add to favorites</li>
+                    <li>Share</li>
+                    <li>Follow @{{reply.author}}</li>
+                    <li>Block @{{reply.author}}</li>
+                    <li>Report post</li>
+                </ul>
+            </div>
+
+        </div>
+        <i class="fa-solid fa-ellipsis-vertical" id="three-dots" value="{{reply.id}}"></i>
+    </span>
+
+</section>
+
+
+
+{% if replyingToIsReply %}
+<p>@{{replyingToAuthor}} </p>
+{% endif %}
+
+
+
+
+{% if user.id == reply.author.id %}
+<a href="{% url 'delete-post' reply.pk %}">Delete</a>
+{% endif %}
+<br />
+
+<a class="post-body-section" onclick="storeScroll()" href="{% url 'upload_reply' reply.pk %}">
+    {{reply.body|safe}}
+</a>
+
+<div class="post-tags">
+    {%for t in reply.get_Tag%}
+    {{t}}
+    {%endfor%}
+</div>
+
+
+{% if reply.image1 %}
+<img src="{{ reply.image1.url}}" width="500">
+{% endif %}
+
+
+<div class="images">
+    {% if reply.has_images %}
+
+    {% for image in image_list %}
+    {% if image.post.id == reply.id %}
+    <img src="{{ image.image.url}}">
+    {% endif %}
+    {% endfor %}
+    {{ reply.imagefiles}}
+    {% endif %}
+</div>
+{% if reply.video %}
+<video class="post-video" width="500" controls autoplay>
+    <source src="{{reply.video.url}}" type="video/mp4">
+</video>
+{% endif %}
+<br /> -->

@@ -1,0 +1,184 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Community
+{% endblock title %}
+
+{% block content %}
+{% include 'navigation/navbar-top.html' %}
+{% include 'community/community_header.html' %}
+
+<div class="main-body">
+    {% include 'navigation/sidebar-left.html' %}
+
+
+    <div class="page-contents user-profile-page-contents">
+        <div class="posts-timeline">
+            {% include 'user/user_profile_info_holder.html' %}
+
+
+
+            <div class="profile-stats">
+                <div class="logged_in_user">{{user.username}}</div>
+                <div class="not_display_info">
+                    <h2 class="user_name" style="display: none;">{{profile_owner.username}}</h2>
+                </div>
+
+
+                {%for g in gamer_profiles%}
+
+                {% if g.game == main_game_profile.main_gamer_profile.game %}
+
+                <div class="main_game" style="display: none;">{{g.game}}</div>
+
+
+
+                {%endif%}
+                {%endfor%}
+                <div class="game-specific-all-stats">
+                    {%for g in gamer_profiles%}
+                    {% if g.game == main_game_profile.main_gamer_profile.game %}
+                    <button id="gamer_profiles-btn_to_show_all_stats">
+                        <div>
+                            {%for logo, url in game_logos.items%}
+                            {%if g.game == logo %}
+                            <img class="gamer_profiles-btn_to_show_all_stats-img" src={{url}} alt="">
+                            {%endif%}
+                            {%endfor%}
+                            <div class="gamer_profiles-btn_to_show_all_stats_text">
+                                {{g.game}}
+                            </div>
+                        </div>
+                    </button>
+
+                    {%endif%}
+                    {%endfor%}
+
+                </div>
+                <div class="gamer_profiles_all_stats_dropdown-container">
+                    <div class="gamer_profiles_all_stats_dropdown">
+                        {%for g in gamer_profiles%}
+                        <button class="gamer_profiles_all_stats_dropdown-btn">
+
+                            {%for logo, url in game_logos.items%}
+                            {%if g.game == logo %}
+
+                            <img src="{{url}}">
+
+                            {%endif%}
+                            {%endfor%}
+                            <div class="gamer_profiles_all_stats_dropdown-item">{{g.game}}</div>
+
+
+                        </button>
+
+                        {%endfor%}
+                    </div>
+                </div>
+                <div class="gamer_profile_all_stats_section">
+
+                </div>
+                <button>Follow</button>
+            </div>
+
+        </div>
+
+        {% include 'navigation/sidebar_user_profile.html' %}
+    </div>
+</div>
+
+<script src="{% static 'PostIT/js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'PostIT/js/infinite.min.js'%}"></script>
+
+
+
+
+<script>
+    function playPauseVideo() {
+        let videos = document.querySelectorAll("video");
+        console.log("VIDEOS" + videos)
+        videos.forEach((video) => {
+            // We can only control playback without insteraction if video is mute
+            video.muted = true;
+            // Play is a promise so we need to check we have it
+            let playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.then((_) => {
+                    let observer = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((entry) => {
+                                if (
+                                    entry.intersectionRatio !== 1 &&
+                                    !video.paused
+                                ) {
+                                    video.pause();
+                                } else if (video.paused) {
+                                    video.play();
+                                }
+                            });
+                        },
+                        { threshold: 0.9 }
+                    );
+                    observer.observe(video);
+                });
+            }
+        });
+    }
+</script>
+
+<script>
+
+    var selected_gamer_profile;
+    $('.gamer_profiles_all_stats_dropdown-container').css('display', 'none');
+    $(document).ready(function () {
+        document.getElementById("gamer_profiles-btn_to_show_all_stats").addEventListener("click", Toggle_Main_Dropdown_Display);
+        $('.profile-info-stats').addClass('selected-tab');
+
+        selected_gamer_profile = $('.main_game').text();
+        get_selected_game_stats();
+        Toggle_Main_Dropdown_Display();
+    });
+
+    $('.gamer_profiles_all_stats_dropdown-btn').click(function () {
+        selected_gamer_profile = $(this).text().trim();
+        console.log(selected_gamer_profile);
+        get_selected_game_stats();
+    });
+
+    function get_selected_game_stats() {
+        user_name = $('.user_name').text().replaceAll(' ', '');
+        $.ajax({
+            type: 'POST',
+            url: `/get_user_profile_stats/${user_name}/${selected_gamer_profile}`,
+
+
+            dataType: "json",
+            data: {
+                game: selected_gamer_profile,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function (response) {
+
+                $('.gamer_profile_all_stats_section').html(response['gamer_profile_stats']);
+                Toggle_Main_Dropdown_Display();
+                console.log(response['game_logo'])
+                $('.gamer_profiles-btn_to_show_all_stats_text').text(selected_gamer_profile);
+                $('.gamer_profiles-btn_to_show_all_stats-img').attr("src", response['game_logo']);
+
+            }
+        })
+    }
+
+
+    function Toggle_Main_Dropdown_Display() {
+        if ($('.gamer_profiles_all_stats_dropdown-container').css('display') == 'flex') {
+            $('.gamer_profiles_all_stats_dropdown-container').css('display', 'none');
+        }
+        else $('.gamer_profiles_all_stats_dropdown-container').css('display', 'flex');
+    }
+</script>
+
+
+
+<script src="{% static 'PostIT/js/togglePostOptions.js'%}"></script>
+{% endblock content %}

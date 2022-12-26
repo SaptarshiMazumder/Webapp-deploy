@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Page3 - Add reply
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+
+
+{% if user.is_authenticated %}
+
+<a href="{% url 'add-image-reply' pk %}">Image Reply</a>
+<a href="{% url 'add-video-reply' pk %}">Video Reply</a>
+
+{% if replying_to %}
+Replying to
+{% for parent in replying_to %}
+{{ parent.author}}<br />
+{{ parent.body|safe }}
+<br /><br />
+{% endfor %}
+{% endif %}
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.as_p }}
+
+    <button type="submit">Reply</button>
+</form>
+
+
+{% else %}
+Login first!
+{% endif %}
+{% endblock content %}

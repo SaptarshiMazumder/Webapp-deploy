@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Page3 Category
+{% endblock title %}
+
+{% block content %}
+
+
+<h1>Page3 Homepage</h1><br />
+{% if catrgory_posts %}
+<h1>{{ cat }}</h1>
+<ul>
+    {% for post in catrgory_posts %}
+
+    <li>
+        <div><a href="{% url 'post-page' post.pk %}">{{ post.title }} </a>| {{ post.author }} | {{ post.post_date }} |
+            <a href="{% url 'posts-by-category' post.category %}">{{ post.category }}</a>
+            <br />
+            {% if user.is_authenticated %}
+            {% if user.id == post.author.id %}
+            <a href="{% url 'edit-post' post.pk %}">Edit</a>
+            <a href="{% url 'delete-post' post.pk %}">Delete</a>
+            {% endif %}
+            {% endif %}
+            <hr>
+            {{ post.body }}
+        </div>
+    </li><br /><br />
+
+    {% endfor %}
+</ul>
+
+{% else %}
+<h2>Sorry, no posts found for category <i>{{ cat }}</i></h2>
+{% endif %}
+{% endblock content %}

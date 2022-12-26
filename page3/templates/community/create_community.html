@@ -1,0 +1,23 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Page3 - Create Community
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+{{user}}
+{{message}}
+{% if user.is_authenticated %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+
+
+{% else %}
+Login first!
+{% endif %}
+{% endblock content %}

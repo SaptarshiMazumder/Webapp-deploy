@@ -1,0 +1,331 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Create Gamer Profile
+{% endblock title %}
+
+{% block content %}
+{% include 'navigation/navbar-top.html' %}
+{% load crispy_forms_tags %}
+{% if user.is_authenticated %}
+<div class="main-body">
+    {% include 'navigation/sidebar-left.html' %}
+    <div class="page-contents">
+        <div class="posts-timeline">
+            <div class="post">
+                <div id="currentuser" style="display: none;">{{user.username}}</div>
+                <div class="profile_exists_popup popup">
+
+                </div>
+                <form action="" method="POST" enctype="multipart/form-data" id="gamerprofile_form">
+                    <div class="gamer_profile_form">
+                        <div class="header">
+                            Create new Gamer Profile
+                        </div>
+                        <hr>
+                        {% csrf_token %}
+
+                        <div class="profile-item">
+                            <div class="label">Game Title</div>
+                            <div class="game">{{form.game}}</div>
+                        </div>
+                        <div class="profile-item">
+                            <div class="label"> Preferred Server</div>
+                            <select class="servers" name="server" form="gamerprofile_form"></select>
+                        </div>
+                        <div class="profile-item">
+                            <div class="label"> Current Rank</div>
+                            <select class="ranks" name="rank" form="gamerprofile_form"></select>
+                        </div>
+                        <div class="profile-item">
+                            <div class="label"> Achievements</div>
+                            <textarea class="achievements" name="achievements"
+                                placeholder="eg. I have been a Radiant player for 2 years, I have played in Tier 2 LAN tournaments"
+                                form="gamerprofile_form"></textarea>
+                        </div>
+                        <div class="experience">
+                            <div class="profile-item">
+                                <div class="label">Experience</div>
+                                <div class="add_exp_button">Add Experience</div>
+                                <div class="experience_container"></div>
+                            </div>
+                        </div>
+                        <div class="profile-item">
+
+                            <div class="additional-fields">
+
+                            </div>
+                        </div>
+                        <div class="profile-item">
+                            <div class="roles">
+                                <div class="label">How well can you play the roles ?</div>
+                            </div>
+                        </div>
+                        <div class="profile-item">
+                            <div class="label">Additional Information</div>
+
+                            <textarea name="remarks" class="remarks"></textarea>
+
+                        </div>
+                        <div class="profile-item">
+                            <input type="checkbox" name="is_looking_for_friends" id="is_looking_for_friends">
+                            <label for="is_looking_for_friends" class="label">Are you looking for people to play with
+                                ?</label>
+                        </div>
+                        <div class="profile-item">
+                            <input type="checkbox" id="is_main" name="is_main">
+                            <label for="is_main" class="label">Set as main profile</label>
+
+                        </div>
+                        <div class="profile-item">
+                            <div class="label">Time Available to Play with others</div>
+                            <input name="time_available" class="time_available">
+                        </div>
+                        <div class="profile-item">
+                            <div class="label">Are you looking for Teams/ Talent ?</div>
+                            <select class="user_status" name="user_status">
+
+                            </select>
+                        </div>
+                        <div class="profile-item">
+                            <div class="label">In game communication skill</div>
+                            <input type="range" min="0" max="5" class="comm_rating input" name="comm_rating">
+                        </div>
+                        <input type="checkbox" name="is_post" id="is_post">Post it for your followers to see!
+                        <div class="post_form">
+                            <input type="text" name="body" id="post_body">
+                        </div>
+                        <button type="submit" name="submit-btn">Create Profile</button>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+        <div class="sidebar ">
+
+
+            {% include 'gamerProfile/gamer_profile_page_sidebar.html' %}
+        </div>
+    </div>
+</div>
+<!-- <form  action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        
+    </form> -->
+
+{% else %}
+Login first!
+{% endif %}
+
+<script src="{% static 'PostIT/js/jquery.waypoints.min.js' %}"></script>
+<script src="{% static 'PostIT/js/infinite.min.js'%}"></script>
+
+<script>
+    var pref_game = $('.game select').val();
+    $(document).ready(function () {
+        pref_game = $('.game select').val();
+
+    })
+
+    $(".post_form").hide();
+    $("#is_post").click(function () {
+        if ($(this).is(":checked")) {
+            $(".post_form").show();
+        }
+        else {
+            $(".post_form").hide();
+        }
+    })
+    $('.game').click(function () {
+        var user_name = $('#currentuser').text();
+        pref_game = $('.game select').val();
+        edit_existing_profile_link = `/edit_gamer_profile/${user_name} `
+
+        $.ajax({
+            type: 'GET',
+            url: `/getgamerank_server/${pref_game}`,
+            success: function (response) {
+
+                HidePopup();
+
+                if (response['is_profile_exists'] == true) {
+                    $('.profile_exists_popup').empty();
+
+                    $('.profile_exists_popup').append(`<div class="popup_contents">
+                                <h3>You already have a profile for this game!</h3>
+                                <div class="popup_button_container">
+                                <a href="${edit_existing_profile_link}">
+                                    <button class="primary-button" > Edit exisitng profile </button></a>
+                                <button class="primary-button" id="close_popup" onclick="HidePopup()"> Override existing profile </button>
+                                </div>
+                            </div>`)
+                    ShowPopup();
+                }
+
+                $('.servers').empty();
+                for (let i = 0; i < response['servers'].length; i++) {
+                    $('.servers').append(`<option>${response['servers'][i][0]}</option>`)
+                }
+
+                $('.ranks').empty();
+                for (let i = 0; i < response['ranks'].length; i++) {
+                    $('.ranks').append(`<option>${response['ranks'][i][0]}</option>`)
+                }
+
+                $('.user_status').empty();
+                console.log(response['default_user_status'])
+                for (let i = 0; i < response['default_user_status'].length; i++) {
+
+                    if (response['default_user_status'][i][0] == "none")
+                        $('.user_status').append(`<option selected="selected">${response['default_user_status'][i][0]}</option>`)
+                    else
+                        $('.user_status').append(`<option>${response['default_user_status'][i][0]}</option>`)
+                }
+
+                $('.additional-fields').empty();
+                for (let i = 0; i < response['additional_fields'].length; i++) {
+
+                    let field = response['additional_fields'][i]
+
+                    $('.additional-fields').append(`<div class="label"> ${response['additional_fields'][i]}</div>
+                                                    <input name=field_${i} class="field_${i} input"></input>`)
+                }
+
+                $('.roles').empty();
+                for (let i = 0; i < response['default_roles'].length; i++) {
+                    let role = response['default_roles'][i];
+                    let roles_zero_values = new Array(response['default_roles'].length).fill(0)
+
+                    $('.roles').append(`<div class="label">${response['default_roles'][i]}</div>
+                        <span><input type="range" min="0" max="5" name=role_${i} class="role_${i} input" id="role_slider"></input>
+                        <div class="role_slider_${i}"></div></span>`);
+
+                    $(`.role_${i}`).val(roles_zero_values[i])
+                }
+            }
+        })
+    })
+
+    var exp_counter = 0;
+
+    $('.add_exp_button').click(function () {
+
+        $.ajax({
+            type: 'GET',
+            url: `/getgamerank_server/${pref_game}`,
+            success: function (response) {
+
+                $('.experience_container').append(`<div class="exp_no${exp_counter}"></div>`)
+                for (let i = 0; i < response['experience_fields'].length; i++) {
+                    $(`.exp_no${exp_counter}`).append(`<div class="label">
+                                               ${response['experience_fields'][i]}
+                                            </div>
+                                            <textarea name="${response['experience_fields'][i]}_${exp_counter}"
+                                             class="exp_input"></textarea>`);
+
+                }
+                $(`.exp_no${exp_counter}`).append(`<button type="button" class="remove_exp_button ">Remove Experience</button>`)
+                exp_counter++;
+
+                $('.remove_exp_button').on('click', function () {
+                    console.log("Remove Exp clicked!");
+                    $(this).parent().remove();
+                })
+            }
+        })
+    });
+
+    function HidePopup() {
+        $('.profile_exists_popup').css('display', 'none');
+    }
+    function ShowPopup() {
+        $('.profile_exists_popup').css('display', 'flex');
+    }
+
+    let is_main = false;
+    $('#is_main').click(function () {
+
+        if ($(this).is(":checked")) {
+            is_main = true;
+        }
+        else is_main = false;
+        console.log(is_main);
+    })
+
+    //$(document).on('submit', '#gamerprofile_form') 
+    function SubmitForm(e) {
+        //e.preventDefault();
+        var pref_game = $('.game select').val();
+        var user_name = $('#currentuser').text();
+        let additional_info = [
+            $('.field_0').val(),
+            $('.field_1').val(),
+            $('.field_2').val()]
+        console.log(additional_info,);
+        $.ajax({
+            type: 'POST',
+            url: `/create_gamer_profile/${user_name}`,
+            data: {
+                game: pref_game,
+                rank: $('.ranks').val(),
+                server: $('.servers').val(),
+                additional_info: {
+                    1: additional_info
+                }
+                ,
+                body: $('#post_body').val(),
+                is_main: is_main,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (response) {
+                console.log("Success");
+                //window.location = '/';
+            }
+        })
+    }
+
+</script>
+
+<script>
+    var selected_gamer_profile;
+    $('.gamer_profiles_dropdown-container').css('display', 'none');
+
+    $(document).ready(function () {
+        document.getElementById("gamer_profiles-btn").addEventListener("click", Toggle_Dropdown_Display);
+    });
+
+    $('.gamer_profiles_dropdown-btn').click(function () {
+        selected_gamer_profile = $(this).text().trim();
+
+        user_name = $('.sidebar_username').text().replaceAll(' ', '');
+        $.ajax({
+            type: 'POST',
+            url: `/get_gamer_profile_stats/${user_name}`,
+            dataType: "json",
+            data: {
+                game: selected_gamer_profile,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (response) {
+
+                $('.gamer_profile_stats_section').html(response['gamer_profile_stats']);
+                Toggle_Dropdown_Display();
+                console.log(response['game_logo'])
+                $('.gamer_profiles-btn-value').text($('.game_name').text());
+                $('.gamer_profiles-btn-img').attr("src", response['game_logo']);
+
+            }
+        })
+    });
+
+
+    function Toggle_Dropdown_Display() {
+        if ($('.gamer_profiles_dropdown-container').css('display') == 'flex') {
+            $('.gamer_profiles_dropdown-container').css('display', 'none');
+        }
+        else $('.gamer_profiles_dropdown-container').css('display', 'flex');
+    }
+</script>
+{% endblock content %}

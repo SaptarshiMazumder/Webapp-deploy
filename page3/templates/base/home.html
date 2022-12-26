@@ -1,0 +1,168 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Page3 Homepage
+{% endblock title %}
+
+{% block content %}
+
+<body onload="javascript:playPauseVideo()">
+    <h1>Page3 Homepage</h1><br />
+    Logged in as {{ user.username }}
+    <ul>
+        {% for post in object_list %}
+        {% if not post.is_reply %}
+        <li>
+            <div><a href="{% url 'post-page' post.pk %}">{{ post.title }} </a>| {{ post.author }} | {{ post.post_date }}
+                |
+                <a href="{% url 'posts-by-category' post.tags %}">{{ post.category}}</a> <small> {{post.id}}</small>
+                <br />
+                {% if user.is_authenticated %}
+                {% if user.id == post.author.id %}
+                {% if post.has_video %}
+                <a href="{% url 'edit-video-post' post.pk %}">Edit</a>
+                {% elif post.has_images %}
+                <a href="{% url 'edit-image-post' post.pk %}">Edit</a>
+                {% else %}
+                <a href="{% url 'edit-post' post.pk %}">Edit</a>
+                {% endif %}
+
+                <a href="{% url 'delete-post' post.pk %}">Delete</a>
+                <!-- <button id="like-button" value="{{ post.pk }}">Like</button> -->
+                {% endif %}
+                {% endif %}
+                <hr>
+                {{ post.body|safe}}
+                {% if post.image1 %}
+                <img src="{{ post.image1.url}}" width="500">
+                {% endif %}
+                <br />
+
+                {% if post.has_images %}
+                {% for image in image_list %}
+                {% if image.post.id == post.id %}
+                <img src="{{ image.image.url}}" width="500">
+                {% endif %}
+                {% endfor %}
+                {{ post.imagefiles}}
+                {% endif %}
+
+                {% if post.video %}
+                <video width="500" controls autoplay>
+                    <source src="{{post.video.url}}" type="video/mp4">
+                </video>
+
+                <!-- <a href="{{post.video.url}}">Link</a> -->
+
+                {% endif %}
+                <br />
+
+                <!-- {{ post.likes.count }} likes
+            {{ post.liked_by }} -->
+
+
+
+                {% if user.is_authenticated %}
+
+                <!-- <span id="like_count" type="hidden">{{ post.like_count}}</span> -->
+                <button id="like-button" name="{{ post.like_count }}" value="{{ post.id }}">LIKED BY
+                    {{post.like_count}}</button>
+
+                <a href="{% url 'add-reply' post.pk %}">Text Reply</a> <a
+                    href="{% url 'add-image-reply' post.pk %}">Image Reply</a> <a
+                    href="{% url 'add-video-reply' post.pk %}">Video Reply</a>
+
+                {% endif %}
+
+
+            </div>
+        </li><br /><br />
+        {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+
+<script>
+    function updateText(btn, no_of_likes) {
+        btn.text("LIKED BY" + " " + no_of_likes)
+    }
+    $(document).on('click', '#like-button', function (e) {
+        e.preventDefault();
+
+        var this_ = $(this)
+        postid = this_.attr("value").valueOf()
+
+        // var somevar = this_.attr()
+        $.ajax({
+            type: 'POST',
+            url: '{% url "like" %}',
+            data: {
+                postid: postid,
+                // postid: $('#like-button').val(),
+                action: 'post',
+                // postid: '{{ post.pk }}',
+            },
+            success: function (json) {
+
+                // this.getElementById("like-button").innerHTML = json['result']
+                // document.getElementsByTagName('{{post.id}}').innerHTML = json['result']
+
+                // document.getElementById("like_count").innerHTML = json['result'];
+                // no_of_likes = this_.attr("name").valueOf();
+                no_of_likes = json['result'];
+                console.log(json)
+                updateText(this_, no_of_likes)
+            },
+            error: function (xhr, errmsg, err) {
+
+            }
+        });
+    })
+
+    function playPauseVideo() {
+        let videos = document.querySelectorAll("video");
+        videos.forEach((video) => {
+            // We can only control playback without insteraction if video is mute
+            video.muted = true;
+            // Play is a promise so we need to check we have it
+            let playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.then((_) => {
+                    let observer = new IntersectionObserver(
+                        (entries) => {
+                            entries.forEach((entry) => {
+                                if (
+                                    entry.intersectionRatio !== 1 &&
+                                    !video.paused
+                                ) {
+                                    video.pause();
+                                } else if (video.paused) {
+                                    video.play();
+                                }
+                            });
+                        },
+                        { threshold: 0.9 }
+                    );
+                    observer.observe(video);
+                });
+            }
+        });
+    }
+</script>
+
+
+<!-- REST API View -->
+<script>
+    const xhr = new XMLHttpRequest()
+    const method = 'GET'
+    const url = "/posts"
+    const responseType = 'json'
+
+    xhr.responseType = responseType
+    xhr.open(method, url)
+    xhr.onload = function () {
+        var listedItems = xhr.response.response
+        console.log(listedItems)
+    }
+</script>
+
+{% endblock content %}

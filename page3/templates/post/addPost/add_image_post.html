@@ -1,0 +1,46 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Page3 - Add Image Post
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+{% if user.is_authenticated %}
+{% include 'navigation/navbar-top.html' %}
+<div class="main-body">
+    {% include 'navigation/sidebar-left.html' %}
+    <form action="" method="POST" enctype="multipart/form-data" id="add_post_form" style="color: white;">
+        <div class=" form_contents">
+            <div class="form_label">
+                Add a post
+            </div>
+            {% csrf_token %}
+            {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+            {% endfor %}
+
+            {% for field in form %}
+            <label>
+                {{field.label}}
+            </label>
+            {{ field }}<br />
+            {% endfor %}
+
+            {{ imageform.management_form }}
+
+            {% for form in imageform %}
+            {{ form }}
+            {% endfor %}
+
+
+            <!-- {{ form.media }}
+    {{ form.as_p }} -->
+            <button type="submit">Post</button>
+        </div>
+    </form>
+</div>
+
+{% else %}
+Login first!
+{% endif %}
+{% endblock content %}

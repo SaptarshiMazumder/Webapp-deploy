@@ -1,0 +1,85 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Page3 - Edit Community
+{% endblock title %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+<style>
+    form {
+        color: white;
+    }
+</style>
+{{user}}
+{{message}}
+{% if user.is_authenticated %}
+
+
+<div class="community_id">
+    {{c.id}}
+</div>
+<form action="" method="POST" enctype="multipart/form-data" id="edit_form">
+    {% csrf_token %}
+    {{ form.media }}
+    {{ form|crispy }}
+
+</form>
+
+<div id="add_rule_btn">Add rule</div>
+<div class="rules">
+</div>
+
+<input type="submit" form="edit_form" value="Update Community" id="edit_form_btn" />
+{% else %}
+Login first!
+{% endif %}
+
+
+<script>
+    let rules_count = 0;
+    $(document).ready(function () {
+        document.getElementById("add_rule_btn").addEventListener("click", add_rule);
+        document.getElementById("edit_form_btn").addEventListener("click", submit_rules);
+        var comm_id = $('.community_id').text().trim();
+        console.log(comm_id)
+        $.ajax({
+            type: 'GET',
+            url: `/get_community_data/${comm_id}`,
+            success: function (response) {
+                console.log(response)
+                $('.community_name').val(response['community_name'])
+            }
+        })
+    });
+    $('#add_rule').click(function (e) {
+        e.preventDefault();
+    })
+
+
+    function add_rule() {
+        $('.rules').append(`<input class="rule_input" name=rule_${rules_count}></input>`);
+        rules_count++;
+
+    }
+    function submit_rules() {
+        var rules = []
+        for (let i = 0; i < rules_count; i++) {
+            rules.append($(`.rule_${i}`).val())
+        }
+        console.log(comm_id)
+        $.ajax({
+            type: 'POST',
+            url: `/edit_community_rules/${comm_id}`,
+            data: {
+                rules: rules,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (response) {
+                console.log("Success")
+
+            }
+        })
+    }
+</script>
+
+{% endblock content %}

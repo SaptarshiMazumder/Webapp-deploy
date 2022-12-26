@@ -1,0 +1,44 @@
+{% load static %}
+<div class="gamer-profile-sidebar">
+    <div class="header">
+        <div class="header-noimg"></div>
+        <div class="profile">
+            <div class="profile-identity">
+                <a href="{%url 'user-posts-page' user %}">
+                    {% if user.profile.profile_pic.name %}
+                    <img src="{{ user.profile.profile_pic.url}}"></a>
+                {% else %}
+                <a href="{%url 'user-posts-page' user %}">
+                    <img src="{% static 'PostIT/images/profilepic.jpg' %}">
+                </a>
+                {% endif %}
+                <div id="currentuser">{{user.username}}</div>
+            </div>
+            <div class="profile-info">
+                <div class="info-item">
+                    <span class="data">{{user.profile.followers.count}}</span>
+                    <div class="label">Followers</div>
+
+                </div>
+                <div class="info-item">
+                    <span class="data">{{user.profile.following.count}}</span>
+                    <div class="label">Following</div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    {%if gamer_profiles%}
+
+
+
+    {%include 'gamerProfile/gamer_profile_section_sidebar.html' %}
+
+    {%endif%}
+    <div class="gamer_profile_stats_section">
+        {%include 'gamerProfile/gamer_profile_stats.html' %}
+    </div>
+    {%include 'navigation/sidebar_page_links.html' %}
+</div>

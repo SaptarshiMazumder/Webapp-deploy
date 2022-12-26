@@ -1,0 +1,42 @@
+{% load static %}
+
+<div class="gamer_profiles" id="gamer_profiles">
+    {%for g in gamer_profiles%}
+
+    {%if g.game == main_game_profile.main_gamer_profile.game%}
+    <button id="gamer_profiles-btn" value="">
+        <div>
+            {%for logo, url in game_logos.items%}
+            {%if g.game == logo %}
+            <img class="gamer_profiles-btn-img" src={{url}} alt="">
+            {%endif%}
+            {%endfor%}
+            <div class="gamer_profiles_btn_text">
+                {{g.game}}
+            </div>
+        </div>
+        <i class="fa-solid fa-angle-down"></i>
+    </button>
+    {%endif%}
+    {%endfor%}
+</div>
+<div class="gamer_profiles_dropdown-container">
+    <div class="gamer_profiles_dropdown">
+        {%for g in gamer_profiles%}
+        <button class="gamer_profiles_dropdown-btn">
+
+            {%for logo, url in game_logos.items%}
+            {%if g.game == logo %}
+            <!-- <img class="gamer_profiles-btn-img" src={{b}} alt=""> -->
+            <img src="{{url}}">
+
+            {%endif%}
+            {%endfor%}
+            <div class="gamer_profiles_dropdown-item">{{g.game}}</div>
+
+
+        </button>
+
+        {%endfor%}
+    </div>
+</div>

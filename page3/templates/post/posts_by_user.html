@@ -1,0 +1,197 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Page3 Homepage
+{% endblock title %}
+
+{% block content %}
+
+<div class="main-body">
+    <br />
+    <div class="page-contents">
+        <div class="sidebar">
+            <div class="logged_in_user">{{user.username}}</div>
+            <div class="user_page_profile_pic"><img src="/media/{{profile.profile_pic}}" /></div>
+            <h1>This is the profilepage of</h1>
+            <h1 class="user_name">{{profile_owner.username}}</h1>
+            <div class="followers">Followers{{profile.followers.count}}</div>
+            <div class="followers">Following{{profile.following.count}}</div>
+
+
+            {%for g in gamer_profiles%}
+
+            {% if g.game == main_gamer_profile.main_gamer_profile.game %}
+
+            <div class="main_game" style="display: none;">{{g.game}}</div>
+
+
+
+            {%endif%}
+            {%endfor%}
+            <div class="game-specific-stats">
+                {%for g in gamer_profiles%}
+                {% if g.game == main_gamer_profile.main_gamer_profile.game %}
+                <button id="gamer_profiles-btn">
+                    <div>
+                        {%for logo, url in game_logos.items%}
+                        {%if g.game == logo %}
+                        <img class="gamer_profiles-btn-img" src={{url}} alt="">
+                        {%endif%}
+                        {%endfor%}
+                        <div class="gamer_profiles-btn-value">
+                            {{g.game}}
+                        </div>
+                    </div>
+                </button>
+
+                {%endif%}
+                {%endfor%}
+
+            </div>
+            <div class="gamer_profiles_dropdown-container">
+                <div class="gamer_profiles_dropdown">
+                    {%for g in gamer_profiles%}
+                    <button class="gamer_profiles_dropdown-btn">
+
+                        {%for logo, url in game_logos.items%}
+                        {%if g.game == logo %}
+
+                        <img src="{{url}}">
+
+                        {%endif%}
+                        {%endfor%}
+                        <div class="gamer_profiles_dropdown-item">{{g.game}}</div>
+
+
+                    </button>
+
+                    {%endfor%}
+                </div>
+            </div>
+            <div class="gamer_profile_stats_section">
+
+            </div>
+            <button class="follow_btn">Follow</button>
+        </div>
+        {% if posts %}
+
+
+        <div class="posts-timeline">
+            <ul>
+                {% for post in posts %}
+
+                <li class="post">
+                    <div>
+                        <div class="profile-pic">
+                            <a href="{%url 'posts-by-user' post.author%}"><img src="/media/{{profile.profile_pic}}"
+                                    width="500"></a>
+                        </div>
+                        {{ post.title }} | {{ post.author }} | {{ post.post_date }} |
+                        <a href="{% url 'posts-by-category' post.category %}">{{ post.category }}</a>
+                        <br />
+                        {% if user.is_authenticated %}
+                        {% if user.id == post.author.id %}
+                        <a href="{% url 'edit-post' post.pk %}">Edit</a>
+                        <a href="{% url 'delete-post' post.pk %}">Delete</a>
+                        {% endif %}
+                        {% endif %}
+                        <hr>
+                        <a class="post-title" onclick="storeScroll()" href="{% url 'upload_reply' post.pk %}">
+                            {{post.body|safe}}</a>
+                        {% if post.image1 %}
+                        <img src="{{ post.image1.url}}" width="500">
+                        {% endif %}
+
+
+                        <div class="images">
+                            {% if post.has_images %}
+
+                            {% for image in image_list %}
+                            {% if image.post.id == post.id %}
+                            <img src="{{ image.image.url}}">
+                            {% endif %}
+                            {% endfor %}
+                            {{ post.imagefiles}}
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% else %}
+    <h2>Sorry, no posts found for category <i>{{ cat }}</i></h2>
+    {% endif %}
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('.follow_btn').click(function () {
+            $.ajax({
+                type: 'POST',
+                url: `/start_following/${$('.user_name').text()}`,
+                data: {
+                    'user': $('.logged_in_user').text(),
+                    // csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (response) {
+
+                },
+                error: function (response) {
+                    //alert("Error getting ranks and servers")
+                }
+            })
+        })
+    })
+
+
+    var selected_gamer_profile;
+    $('.gamer_profiles_dropdown-container').css('display', 'none');
+    $(document).ready(function () {
+        document.getElementById("gamer_profiles-btn").addEventListener("click", Toggle_Dropdown_Display);
+        selected_gamer_profile = $('.main_game').text();
+        get_selected_game_stats();
+        Toggle_Dropdown_Display();
+    });
+
+    $('.gamer_profiles_dropdown-btn').click(function () {
+        selected_gamer_profile = $(this).text().trim();
+        console.log(selected_gamer_profile);
+        get_selected_game_stats();
+    });
+
+    function get_selected_game_stats() {
+        user_name = $('.user_name').text().replaceAll(' ', '');
+        $.ajax({
+            type: 'POST',
+            url: `/get_user_profile_stats/${user_name}/${selected_gamer_profile}`,
+
+
+            dataType: "json",
+            data: {
+                game: selected_gamer_profile,
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+            },
+            success: function (response) {
+
+                $('.gamer_profile_stats_section').html(response['gamer_profile_stats']);
+                Toggle_Dropdown_Display();
+                console.log(response['game_logo'])
+                $('.gamer_profiles-btn-value').text(selected_gamer_profile);
+                $('.gamer_profiles-btn-img').attr("src", response['game_logo']);
+
+            }
+        })
+    }
+
+
+    function Toggle_Dropdown_Display() {
+        if ($('.gamer_profiles_dropdown-container').css('display') == 'flex') {
+            $('.gamer_profiles_dropdown-container').css('display', 'none');
+        }
+        else $('.gamer_profiles_dropdown-container').css('display', 'flex');
+    }
+</script>
+{% endblock content %}

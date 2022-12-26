@@ -1,0 +1,44 @@
+<div class="gamer_profle_info">
+    {%if selected_gamer_profiles%}
+    {%for g in selected_gamer_profiles%}
+    <div>
+        <div class="game_name" style="display: none;">{{g.game}}</div>
+        <div class="game_stat">
+            <span class="label"><i class="fa-solid fa-ranking-star"></i>Rank:</span>
+            <span>
+                {{g.rank}}</span>
+        </div>
+        <div class="game_stat">
+            <span class="label"><i class="fa-solid fa-server"></i>Server:</span>
+            <span>
+                {{g.server}}</span>
+        </div>
+        <div class="game_stat">
+            <span class="label"><i class="fa-solid fa-magnifying-glass"></i>Allow Matchmaking:</span>
+            <span>
+                <i class="fa-solid fa-toggle-on"></i></span>
+        </div>
+    </div>
+
+    {%endfor%}
+
+    {%else%}
+    <!-- <div class="game_name">{{main_game_profile.main_gamer_profile.game}}</div> -->
+    <div class="game_name">{{g.game}}</div>
+    <div class="game_stat">
+        <span class="label"><i class="fa-solid fa-ranking-star"></i>Rank:</span>
+        <span class="value">
+            {{main_game_profile.main_gamer_profile.rank}}</span>
+    </div>
+    <div class="game_stat">
+        <span class="label"><i class="fa-solid fa-server"></i>Server:</span>
+        <span class="value">
+            {{main_game_profile.main_gamer_profile.server}}</span>
+    </div>
+    <div class="game_stat">
+        <span class="label"><i class="fa-solid fa-magnifying-glass"></i>Allow Matchmaking:</span>
+        <span class="value">
+            <button><i class="fa-solid fa-toggle-on" style="font-size: large;  padding:0px"></i></button></span>
+    </div>
+    {%endif%}
+</div>

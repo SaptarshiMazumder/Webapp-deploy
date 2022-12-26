@@ -1,0 +1,71 @@
+{% load static %}
+
+{% block content %}
+
+<br />
+
+
+{% if replies_to_post %}
+
+
+{% for post in replies_to_post %}
+<div class="post">
+
+    {% include 'post/postElement/post_content_section.html' %}
+
+    <!--  -->
+
+    {% if user.profile.id %}
+
+    <button id="like-button" class="like-button" name="{{ post.like_count }}"
+        value="{{ post.id }}">{{post.like_count}}<i class="fa-solid fa-heart"></i>
+    </button>
+
+    <button id="open-reply-modal" class="reply-button" value="{{post.pk}}">{{post.reply_count}}<i
+            class="fa-solid fa-comment"></i></button>
+
+
+
+    {% endif %}
+
+    {% if show_replies_button %}
+    {% if post.reply_count > 0 %}
+
+    {% if post.reply_count == 1 %}
+    <button class="show-replies-btn" id="show-replies" value="{{post.pk}}"
+        onclick="this.innerHTML=toggleReplies(this.innerHTML)">Show Reply</button>
+    {% else %}
+
+    <button class="show-replies-btn" id="show-replies" value="{{post.pk}}"
+        onclick="this.innerHTML=toggleReplies(this.innerHTML)">Show {{ post.reply_count }} Replies</button>
+    {% endif %}
+
+
+
+
+    {% endif %}
+
+
+    {% else %}
+    {% endif %}
+    <div class="replies-holder" id="replies-holder" value="{{post.pk}}" style="display: none;">
+
+    </div>
+
+    <hr>
+
+</div>
+{% endfor %}
+{% endif %}
+
+<br /><br />
+
+<br />
+
+<button onclick="history.go(-1)">Back</button>
+<!-- <a href="{% url 'home-page'  %}">Back</a> -->
+
+
+
+
+{% endblock content %}

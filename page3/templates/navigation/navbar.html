@@ -1,0 +1,70 @@
+{% load static %}
+<div class="navbar ">
+
+    <div class="navbar-contents">
+        <div class="navbar-toggle"><i class="fa-solid fa-bars " id="navbar-toggle"></i></div>
+
+        <a class=" home" href="{% url 'home-page'%}"><img src="{% static 'PostIT/images/PostIT.png' %}" width="70"><i
+                class="fa-solid fa-house"></i></a>
+
+
+        {% if user.is_authenticated %}
+        {% if user.profile.id %}
+
+        <div class="search-bar">
+            <form action="{% url 'search'  %}" method="POST" enctype="multipart/form-data" id="search-form">
+                {% csrf_token %}
+                <input name="search_query" type="text" placeholder="Search something ">
+                <button id="search_btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </div>
+        <div class="profile">
+
+            <div class="submenu">
+                <a href="{% url 'logout' %}">Logout</a>
+                <a href="{% url 'profile-page' user.profile.id %}">Profile</a>
+                <a href="{% url 'edit-user-profile-page' user.profile.id %}">Edit Profile</a>
+            </div>
+            <i class="fa-solid fa-user fa-2x"></i>
+
+            {% else %}
+            <a href="{% url 'add-profile' %}">Add Profile</a>
+            {% endif %}
+
+            {% else %}
+            <a href="{% url 'register' %}">Register</a> <a href="{% url 'login' %}">Login</a>
+
+            {% endif %}
+        </div>
+
+
+        <a href="{% url 'edit-profile' %}"><i class="fa-solid fa-gear "></i></a>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="add-post">
+        <i class="fa-solid fa-circle-plus fa-3x"></i>
+        <div class="addpost-submenu">
+            <div class="submenu-item">
+                <a class="create-post" href="{% url 'add-post' %}">Text Post</a>
+                <a class="create-post" href="{% url 'add-post' %}"><i class="fa-solid fa-feather"></i></a>
+            </div>
+
+            <div class="submenu-item">
+                <a href="{% url 'add-image-post' %}">Image Post</a>
+                <a href="{% url 'add-image-post' %}"><i class="fa-regular fa-image "></i></a>
+            </div>
+
+            <div class="submenu-item">
+                <a href="{% url 'add-video-post' %}">Video Post</a>
+                <a href="{% url 'add-video-post' %}"><i class="fa-solid fa-video "></i></a>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="add-post-section">
+        <i class="fa-solid fa-plus">kl</i>
+    </div> -->
+    {%endif%}
+</div>
+
+<script src="{% static 'PostIT/js/navbar.js'%}"></script>

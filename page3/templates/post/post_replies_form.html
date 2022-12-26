@@ -1,0 +1,24 @@
+<div id="img-form">
+    <form enctype="multipart/form-data" id="id_ajax_upload_form" method="POST" novalidate="" value="{{post.pk}}">
+        {% csrf_token %}
+        {% for field in form1 %}
+        {{ field }}<br />
+        {% endfor %}
+
+        {{ imageform.management_form }}
+
+        {% for field in imageform %}
+        {{ field }}
+        {% endfor %}
+        <input type="submit" />
+    </form>
+</div>
+
+<div id="vid-form" style="display: none;">
+    <form enctype="multipart/form-data" id="id_ajax_upload_form2" method="POST" novalidate="" value="{{post.pk}}">
+        {% csrf_token %}
+        {{ form2.as_p }}
+        <input type="submit" />
+    </form>
+</div>
+<button id="toggle-media-type">Add video</button>

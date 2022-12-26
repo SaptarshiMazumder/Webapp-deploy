@@ -1,0 +1,76 @@
+{% load static %}
+
+<div class="profile-info-holder">
+    <div class="logged_in_user" style="display: none;">{{user.username}}</div>
+    <div class="profile-info">
+        <div class="profile-pic">
+            {% if profile.profile_pic.name %}
+            <img src="{{ profile.profile_pic.url}}">
+            {% else %}
+            <img src=" {% static 'PostIT/images/profilepic.jpg' %}">
+            {% endif %}
+
+
+        </div>
+        <div class="profile-info-menu">
+            <div class="profile-info-menu-left">
+                <div class="name">
+                    <h5><b>{{ profile.user.username }}</b></h5>
+                </div>
+                <div>
+                    <button class="profile-interct-button follow_btn">Follow</button>
+                </div>
+            </div>
+            <div class="profile-info-menu-right">
+
+                <div class="info">
+                    <div class="number">{{profile.followers.count}}</div>
+                    <div class="label">Followers</div>
+                </div>
+                <div class="info">
+                    <div class="number">{{profile.following.count}}</div>
+                    <div class="label">Following</div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="profile-info-tabs">
+        <div class="item profile-info-posts"
+            onclick="location.href=`{% url 'user-posts-page' profile.user.username %}`">
+            Posts
+        </div>
+        <div class="item profile-info-stats"
+            onclick="location.href=`{% url 'user-profile-stats' profile.user.username %}`">Profile
+        </div>
+        <div class="item profile-info-following">Following</div>
+        <div class="item profile-info-followers">Followers</div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        console.log("Doc readyy!!")
+        $('.profile-interct-button').click(function () {
+            console.log("Follow btn clicked")
+            $.ajax({
+                type: 'POST',
+                url: `/start_following/${$('.name').text().trim()}`,
+                data: {
+                    'user': $('.logged_in_user').text(),
+                    // csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (response) {
+
+                },
+                error: function (response) {
+                    //alert("Error getting ranks and servers")
+                }
+            })
+        })
+    })
+</script>

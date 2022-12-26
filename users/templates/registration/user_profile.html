@@ -1,0 +1,23 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block title %}
+Page3 - Profile Page
+{% endblock title %}
+
+{% block content %}
+<br />
+{{ page_user }}<br />
+{{ page_user.user.username }}
+<br />
+{% if page_user.profile_pic %}
+<img src="{{ page_user.profile_pic.url}}" width="200">
+{% else %}
+<img src="{% static 'PostIT/images/profilepic.jpg' %}" width="200">
+
+{% endif %}
+<br />
+{% if page_user.bio %}
+{{ page_user.bio }}
+{% endif %}
+
+{% endblock content %}

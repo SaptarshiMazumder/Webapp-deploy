@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Hello world</h1>
+
+<div id="posts">
+    Replace me
+</div>
+
+<script>
+
+    const postsElement = document.getElementById("posts")
+
+    function loadPosts(postsElement) {
+        const xhr = new XMLHttpRequest()
+        const method = 'GET'
+        const url = "/posts"
+        const responseType = 'json'
+
+        xhr.responseType = responseType
+        xhr.open(method, url)
+        xhr.onload = function () {
+            var listedItems = xhr.response.response
+            console.log(listedItems)
+            var allPostsStr = ""
+            var i;
+
+            for (i = 0; i < listedItems.length; i++) {
+                console.log(i)
+                var str = "<div class='container border'> <h1>" + listedItems[i].id + "</h1>" + listedItems[i].author + "<p>" + listedItems[i].body
+                    + "</p>" + " </div>"
+                allPostsStr += str
+
+            }
+            postsElement.innerHTML = allPostsStr
+        }
+        xhr.send()
+    }
+
+    loadPosts(postsElement)
+
+
+
+</script>
+
+{% endblock content %}

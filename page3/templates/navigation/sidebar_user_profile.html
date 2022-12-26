@@ -1,0 +1,87 @@
+<div class="sidebar community-sidebar">
+    <div class="profile_user" style="display: none;">
+        {{ profile.user.username }}
+    </div>
+    {%for logo, url in game_logos.items%}
+    {%endfor%}
+
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">
+            Profile
+        </div>
+
+        {%if gamer_profiles%}
+
+        {%include 'gamerProfile/gamer_profile_section_sidebar.html' %}
+
+        {%endif%}
+
+        <div class="sidebar_gamer_profile_stats_section">
+            {%include 'gamerProfile/gamer_profile_stats.html' %}
+        </div>
+
+        {%include 'navigation/sidebar_page_links.html' %}
+
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">News</div>
+        <div class="article">
+            <p class="value">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit, numquam?</p>
+        </div>
+    </div>
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">News</div>
+        <div class="article">
+            <p class="value">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sit, numquam?</p>
+        </div>
+    </div>
+
+    {% include 'community/communities_list.html' %}
+    <div class="sidebar-section">
+        <div class="sidebar-section-title">More Stuff</div>
+    </div>
+
+</div>
+<script>
+    var selected_gamer_profile;
+    $('.gamer_profiles_dropdown-container').css('display', 'none');
+
+    $(document).ready(function () {
+        document.getElementById("gamer_profiles-btn").addEventListener("click", Toggle_Dropdown_Display);
+    });
+
+    $('.gamer_profiles_dropdown-btn').click(function () {
+        selected_gamer_profile = $(this).text().trim();
+
+        user_name = $('.profile_user').text().replaceAll(' ', '');
+        $.ajax({
+            type: 'POST',
+            url: `/get_gamer_profile_stats/${user_name}`,
+            dataType: "json",
+            data: {
+                game: selected_gamer_profile,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function (response) {
+
+                $('.sidebar_gamer_profile_stats_section').html(response['gamer_profile_stats']);
+                Toggle_Dropdown_Display();
+
+
+                $('.gamer_profiles_btn_text').text($('.game_name').text());
+                $('.gamer_profiles-btn-img').attr("src", response['game_logo']);
+
+            }
+        })
+    });
+
+
+    function Toggle_Dropdown_Display() {
+        if ($('.gamer_profiles_dropdown-container').css('display') == 'flex') {
+            $('.gamer_profiles_dropdown-container').css('display', 'none');
+        }
+        else $('.gamer_profiles_dropdown-container').css('display', 'flex');
+    }
+</script>

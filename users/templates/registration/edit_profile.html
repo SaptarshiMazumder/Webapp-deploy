@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Page3 - Edit Profile
+{% endblock title %}
+
+{% block content %}
+<br />
+{% if user.profile.bio %}
+{{ user.profile.bio }}
+{% endif %}
+{% load crispy_forms_tags %}
+
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit">Update Profile</button>
+</form>
+{% endblock content %}

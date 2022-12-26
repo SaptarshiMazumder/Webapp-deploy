@@ -1,0 +1,130 @@
+{% load static %}
+<div class="sidebar-left" id="sidebar-left">
+
+    <div class="sidebar-middle-section">
+        <div class="sidebar-list">
+
+            <ul>
+
+                <li><a href="#">
+                        <div class="sidebar-list-item">
+                            <i class="fa-solid fa-hashtag"></i>Explore
+                        </div>
+                    </a></li>
+                <li><a href="#">
+                        <div class="sidebar-list-item">
+                            <i class="fa-solid fa-bookmark"></i>Bookmarks
+                        </div>
+                    </a></li>
+                <li><a href="#">
+                        <div class="sidebar-list-item">
+                            <i class="fa-solid fa-magnifying-glass"></i>Discover
+                        </div>
+                    </a></li>
+                <li><a href="#">
+                        <div class="sidebar-list-item">
+                            <i class="fa-solid fa-newspaper"></i>Latest News
+                        </div>
+                    </a></li>
+
+                <li><a href="{% url 'matchmaking-home' user%}">
+                        <div class="sidebar-list-item">
+                            <i class="fa-solid fa-users-viewfinder"></i>Matchmaking
+                        </div>
+
+                    </a></li>
+                <li><a href="{%url 'user-posts-page' user %}">
+                        <div class="sidebar-list-item">
+                            <i class="fa-solid fa-user"></i>Profile
+                        </div>
+                    </a></li>
+            </ul>
+        </div>
+
+    </div>
+
+
+
+    <div class="bottom-sidebar">
+        <hr />
+        {% if user.profile %}
+        <div class="sidebar-profile-section">
+
+            <div class="sidebar-profile-pic">
+                <a href="{%url 'user-posts-page' user %}">
+                    {% if user.profile.profile_pic.name %}
+                    <img src="{{ user.profile.profile_pic.url}}" width="200">
+                    {% else %}
+
+                    <img src="{% static 'PostIT/images/profilepic.jpg' %}" width="200">
+                    {% endif %}
+                </a>
+
+
+            </div>
+
+            <div class="sidebar-profile-name">
+                <div class="sidebar_username">
+                    {{user.username}}
+                </div>
+
+                <div class="sidebar-view-profile-button">
+                    <a href="{%url 'user-posts-page' user %}">View Profile</a>
+
+                </div>
+            </div>
+            <div class="blocker-page" id="blocker-page"></div>
+            <div class="sidebar-profile-settings-options" id="sidebar-profile-settings-options">
+                <ul>
+                    <li class="sidebar-profile-settings-option"><a
+                            href="{% url 'edit-user-profile-page' user.profile.id %}"><i
+                                class="fa-solid fa-pen-to-square"></i>Edit Profile</a></li>
+                    <li class="sidebar-profile-settings-option"><a href="{% url 'register' %}"><i
+                                class="fa-solid fa-user-plus"></i>Create new account</a>
+                    </li>
+                    <li class="sidebar-profile-settings-option"><a href="{% url 'logout' %}"><i
+                                class="fa-solid fa-right-from-bracket"></i>Logout</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-profile-settings-button" onclick="navbarProfileSettingsToggle()">
+
+                <i class="fa-solid fa-ellipsis"></i>
+
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+    function navbarProfileSettingsToggle() {
+        var navbarProfileSettingsOptions = document.getElementById("sidebar-profile-settings-options")
+        var blockerPage = document.getElementById("blocker-page")
+
+
+
+        if (navbarProfileSettingsOptions.style.display === "block") {
+            navbarProfileSettingsOptions.style.display = "none"
+            blockerPage.style.display = "none"
+        }
+        else {
+            navbarProfileSettingsOptions.style.display = "block"
+            blockerPage.style.display = "block"
+            blockerPage.style.pointerEvents = "auto"
+        }
+    }
+
+    $(document).on('click', '#blocker-page', function (e) {
+
+        var navbarProfileSettingsOptions = document.getElementById("sidebar-profile-settings-options")
+        var blockerPage = document.getElementById("blocker-page")
+
+        navbarProfileSettingsOptions.style.display = "none"
+        blockerPage.style.display = "none"
+
+        blockerPage.style.pointerEvents = "none"
+
+    });
+</script>
