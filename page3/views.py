@@ -1127,6 +1127,7 @@ def edit_gamer_profile(request, user):
                 if "Team/ Org Name" in i[0]:
                     teams.append(i[1])
                 if "Role/ Experience" in i[0]:
+                    # Added change here
                     positions.append(i[1])
             # END for experience fields---------------
 
